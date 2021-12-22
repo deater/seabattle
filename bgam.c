@@ -349,24 +349,27 @@ printxy(2,6,"  .||.    ''|...|'    '|..'      .||.....|  ''|...|'  |'....|'  .||
 }
 
 
-void  do_options()     /* Not utilized yet */
-{
+/* Not utilized yet */
+void  do_options(void) {
 }
 
-void do_help()
-{
+/* Not implemented yet */
+void do_help(void) {
 }
 
-int main_menu(DATA *person,MAIN_THINGY *main_thing)   /* The Main Menu */
-{
+/* The Main Menu */
+int main_menu(DATA *person, MAIN_THINGY *main_thing) {
+
    int ch=0;
    char text[100];
 
    while(1){
                                /* Play sound if first time through */
-   if ((sound_device==1) && (first_time==0)) system("cat opening.au > /dev/audio &");
+	if ((sound_device==1) && (first_time==0)) {
+		play_sound("opening.au");
+	}
 
-   if (!first_time) first_time=5;
+	if (!first_time) first_time=5;
 
    clear();                    /* Draw Menu */
    set_color(C_RED,C_BOLD);

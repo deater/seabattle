@@ -52,9 +52,10 @@ typedef struct {
 
 extern DATA *current_player;
 
-/* binp.c */
 /* All the function declarations */
 
+/* binp.c */
+void play_sound(char *soundfile);
 void seabattle_init_curses(void);
 void seabattle_exit_curses(void);
 void set_color(int color,int bold);
