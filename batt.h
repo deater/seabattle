@@ -50,11 +50,13 @@ typedef struct {
   int num_elements;
 } MAIN_THINGY;
 
-DATA *current_player;
+extern DATA *current_player;
 
 /* binp.c */
-void init_curses(void);              /* All the function declarations */
-void exit_curses(void);
+/* All the function declarations */
+
+void seabattle_init_curses(void);
+void seabattle_exit_curses(void);
 void set_color(int color,int bold);
 void printxy(int x,int y,char *tempst);
 void draw_opening(void);

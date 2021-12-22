@@ -8,7 +8,7 @@
 extern int sound_on;                       /* It was simplest to define */
 extern int sound_device;                   /* These globally */
 
-void init_curses(void)                     /* INIT CURSES -- inits curses */
+void seabattle_init_curses(void)           /* INIT CURSES -- inits curses */
 {                                          /* library */
    initscr();
    start_color();
@@ -42,7 +42,7 @@ void printxy(int x,int y,char *tempst)     /* Simple function that saves */
 }
 
 
-void exit_curses(void)                     /* Shutdown curses nicely so the */
+void seabattle_exit_curses(void)           /* Shutdown curses nicely so the */
 {                                          /* terminal works properly */
    clear();
    refresh();
@@ -330,7 +330,10 @@ void quit(void)                            /* Create a Quit Pop-UP */
    wclear(quit_window);
    wrefresh(quit_window);
    delwin(quit_window);
-   if ((ch=='Y') || (ch=='y')) {exit_curses(); exit(0); }
+	if ((ch=='Y') || (ch=='y')) {
+		seabattle_exit_curses();
+		exit(0);
+	}
 #ifndef BROKEN_CURSES
    redrawwin(stdscr);
 #endif

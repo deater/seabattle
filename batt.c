@@ -12,6 +12,7 @@ int sound_on=SOUND_ON;				/*  These are exported */
 int sound_device=SOUND_SPEAKER;			/* Awkward, but keeps */
 int salvo_play=0;				/* paramaters uncluttered*/
 int first_time=0;
+DATA *current_player;
 
 int main(int argc, char **argv) {
 
@@ -22,7 +23,7 @@ int main(int argc, char **argv) {
 	}
 
 	srand(time(NULL));			/* Randomize timer */
-	init_curses();				/* Initialize display */
+	seabattle_init_curses();		/* Initialize display */
 	clear();				/* Clear the screen */
 	refresh();
 	draw_opening();				/* Draw title screen */
