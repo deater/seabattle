@@ -100,7 +100,7 @@ void print_message(int color,int person,char *message)
 void play_the_game(DATA *person)                     /* The Main Routine */
 {
    int users_grid[8][8],computers_grid[8][8];
-   int ch,x=0,y=0,ch2=0,ch3=0,oldcompx=0,oldcompy=0,compx=0;
+   int x=0,y=0,ch2=0,ch3=0,oldcompx=0,oldcompy=0,compx=0;
    int compy=0,turn=0,prev_hit=0;
    int direct=0,second_hit=0;
    char text[100];            /* Used for sprintfs */
@@ -192,7 +192,7 @@ void play_the_game(DATA *person)                     /* The Main Routine */
          (computer_hits_left.air==0) &&
          (computer_hits_left.batt==0) ) {
             print_message(C_RED,1,"YOU WON! PRESS A KEY TO CONTINUE");
-	    ch=getch();
+	    getch();
             clear(); refresh();
      set_color(C_BLUE,C_BOLD);
 printxy(2,2," '||' '|'  ..|''||   '||'  '|'    '|| '||'  '|' '||' '|.   '|'   ");
@@ -211,7 +211,7 @@ printxy(2,6,"   .||.    ''|...|'    '|..'          |   |     .||. .|.   '|    ")
 		           turn,person->best_score);
            printxy(5,8,text);
 	   printxy(27,20,"Press any key to continue");
-           ch=getch();
+           getch();
 	   do_high_score(person->first_name,turn);
 	   person->times_played++;
            return;
@@ -325,7 +325,7 @@ printxy(2,6,"   .||.    ''|...|'    '|..'          |   |     .||. .|.   '|    ")
        (user_hits_left.air==0) &&
        (user_hits_left.batt==0) ) {
          print_message(C_RED,0,"I WON! Press any key to continue");
-         ch=getch();
+         getch();
          clear(); refresh();
       set_color(C_BLUE,C_BOLD);
 printxy(2,2,"'||' '|'  ..|''||   '||'  '|'    '||'       ..|''||    .|'''.|  '||''''|");
@@ -340,7 +340,7 @@ printxy(2,6,"  .||.    ''|...|'    '|..'      .||.....|  ''|...|'  |'....|'  .||
          printxy(27,22,"Press Any Key To Continue");
          printxy(32,10,"The Computer's Pieces:");
          place_grid(computers_grid,32,12,1);
-         ch=getch();
+         getch();
          do_high_score("Computer",turn);
          return;
    }
