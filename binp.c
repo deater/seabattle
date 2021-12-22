@@ -122,24 +122,57 @@ void clear_grid(int grid[8][8])            /* Clears an 8x8 grid */
        grid[i][j]=0;
 }
 
-void do_sound(int which_one)               /* Plays appropriate sound */
-{
-   if (!sound_on) return;                  /* through appropriate device */
-   if (which_one==0) beep();               /* 0=error 1=hit 2=miss 3=sunkit*/
-                                           /* Incomplete as of yet */
-   if (which_one==1)
-      if (sound_device)
-         if(rand()%2) system("cat hit1.au > /dev/audio ");
-         else system("cat hit2.au > /dev/audio ");
-      else beep();
-   if (which_one==2)
-      if (sound_device)
-         if(rand()%2) system("cat miss1.au > /dev/audio ");
-         else system("cat miss2.au > /dev/audio ");
-   if (which_one==3)
-      if (sound_device) system("cat sunkit.au > /dev/audio ");
-      else beep();
+/* Play appropriate sound */
+/* through appropriate device */
+/* 0=error 1=hit 2=miss 3=sunkit */
+/* Incomplete as of yet */
+
+#define SOUND_ERROR	0
+#define SOUND_HIT	1
+#define SOUND_MISS	2
+#define	SOUND_SUNKIT	3
+
+#define SOUND_DEVICE_BEEP	0
+#define SOUND_DEVICE_DIGITAL	1
+
+void play_sound(char *soundfile) {
+
+	char command[100];
+
+	snprintf(command,100,"cat %s > /dev/audio",soundfile);
+
+	if (sound_device==SOUND_DEVICE_DIGITAL) {
+		system(command);
+	}
+	else {
+		beep();
+	}
 }
+
+void do_sound(int which_one) {
+
+	if (!sound_on) return;
+
+	switch(which_one) {
+		case SOUND_ERROR:
+			beep();
+			break;
+		case SOUND_HIT:
+			if (rand()%2) play_sound("hit1.au");
+			else play_sound("hit2.au");
+			break;
+		case SOUND_MISS:
+			if (rand()%2) play_sound("miss1.au");
+			else play_sound("miss2.au");
+			break;
+		case SOUND_SUNKIT:
+			play_sound("sunkit.au");
+			break;
+	}
+}
+
+
+
 
 
 int get_users_grid(int grid[8][8])         /* Main function to allow user */
