@@ -13,8 +13,7 @@ int sound_device=SOUND_SPEAKER ;                  /* Awkward, but keeps */
 int salvo_play=0;                                 /* paramaters uncluttered*/
 int first_time=0;
 
-int main(int argc, char *argv)
-{  
+int main(int argc, char **argv) {
    MAIN_THINGY *main_thing;
    
    if (( main_thing=make_main_thingy())==NULL)
