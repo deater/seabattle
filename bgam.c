@@ -12,8 +12,8 @@ extern int sound_device;
 extern int first_time;
 
 void do_arrow(int whos_turn,int turn_num)   /* 0=Computer, 1=Player */
-{  
-   char text[20];                                  
+{
+   char text[20];
                                      /* Draws the arrow pointing to */
    set_color(C_GREEN,C_BOLD);        /* Whoever's turn it is */
    printxy(36,13,"TURN");
@@ -38,21 +38,21 @@ void print_sound_status()            /* Toggles Sound on and Off */
 {                                    /* And Displays the Change  */
    set_color(C_BLUE,C_NORMAL);
    sound_on=!sound_on;
-   
+
    if(sound_on) {
      printxy(32,5,"Sound ON ");
    }
    else{
      printxy(32,5,"Sound OFF");
    }
-   
+
    if(sound_device){
      printxy(32,6,"Mode 8bit   ");
    }
    else{
      printxy(32,6,"Mode Speaker");
    }
-   
+
    set_color(C_BLUE,C_BOLD);
    printxy(32,5,"S");
    printxy(32,6,"M");
@@ -61,7 +61,7 @@ void print_sound_status()            /* Toggles Sound on and Off */
 void draw_the_screen(DATA *person,int turn_num)    /* Draw the main screen    */ 
 {                                       /* Also called on a redraw */
    set_color(C_BLUE,C_BOLD);
-   printxy(31,2,"S E A B A T T L E");  
+   printxy(31,2,"S E A B A T T L E");
    print_sound_status();                /* Toggle twice to return to */
    print_sound_status();                /* Original state */
    set_color(C_BLUE,C_NORMAL);
@@ -74,7 +74,7 @@ void draw_the_screen(DATA *person,int turn_num)    /* Draw the main screen    */
    printxy(32,8,"H");
    printxy(32,9,"Q");
    printxy(33,10,"X");
-   set_color(C_RED,C_BOLD);     /* Below Centers the Name under the grid */ 
+   set_color(C_RED,C_BOLD);     /* Below Centers the Name under the grid */
    printxy(14-((strlen(person->first_name))/2),14,person->first_name);
    printxy(60,14,"Computer");
    do_arrow(1,turn_num);
@@ -85,7 +85,7 @@ void draw_the_screen(DATA *person,int turn_num)    /* Draw the main screen    */
 void print_message(int color,int person,char *message)
 {                                           /* A generic Message Handler */
    set_color(color,C_BOLD);
-   if(!person) { 
+   if(!person) {
      printxy(5,17,"                             ");
       printxy(5,17,message);
    }
@@ -99,51 +99,51 @@ void print_message(int color,int person,char *message)
 
 void play_the_game(DATA *person)                     /* The Main Routine */
 {
-   int users_grid[8][8],computers_grid[8][8];   
+   int users_grid[8][8],computers_grid[8][8];
    int ch,x=0,y=0,ch2=0,ch3=0,oldcompx=0,oldcompy=0,compx=0;
    int compy=0,turn=0,prev_hit=0;
    int direct=0,second_hit=0;
    char text[100];            /* Used for sprintfs */
-   
+
    struct SHIPS_LEFT{         /* A useful structure */
       int air;
       int batt;
       int sub;
    } computer_hits_left = {5,4,3},user_hits_left = {5,4,3};
-  
-   
+
+
    clear();
    get_users_grid(users_grid);             /* Get Human's Pieces */
-   
+
    clear(); refresh();
    get_computers_grid(computers_grid);     /* Place computer's pieces */
- 
+
    draw_the_screen(person,0);                /* Set up display */
-	     
+
    place_grid(users_grid,5,5,1);
    place_grid(computers_grid,55,5,0);
-   
+
    while (ch3!='Q') {                      /* Main Loop */
       turn++;                              /* Count how many turns */
       do_arrow(1,turn);
       do {                        /* Stuck 30 mins looking to find bug */
 	 ch2=mvgetch(6+y,56+x);   /* only to find 6,56 switched here   */
-	 
+
 	 if((ch2==KEY_UP)&&(y>0)) y--;      /* Checks arrow keys */
 	 if((ch2==KEY_DOWN)&&(y<7)) y++;
 	 if((ch2==KEY_RIGHT)&&(x<14)) x+=2;
 	 if((ch2==KEY_LEFT)&&(x>0)) x-=2;
-	 
+
 	 ch3=toupper(ch2);                   /* Checks for co-ordinates */
 	 if((ch3>='A')&&(ch3<'I')) y=ch3-'A';
 	 if((ch3>='1')&&(ch3<'9')) x=2*(ch3-'1');
-	 
+
 	 place_grid(computers_grid,55,5,0);  /* Puts red && cursor */
 	 set_color(C_RED,C_BOLD);
 	 move(6+y,56+x);
 	 printw("&&");
 	 refresh();
-	 
+
 	 if (ch3=='R') draw_the_screen(person,turn);  /* Menu Items */
 	 if (ch3=='S') print_sound_status();
 	 if (ch3=='X') quit();
@@ -154,20 +154,20 @@ void play_the_game(DATA *person)                     /* The Main Routine */
 	    ch2='O';
 	 }
      } while ((ch2!=' ')&&(ch3!='Q'));
-   
+
      switch (computers_grid[x/2][y]){       /* See where you hit */
-            case 0: computers_grid[x/2][y]=2; 
+            case 0: computers_grid[x/2][y]=2;
                     print_message(C_CYAN,1,"MISS");
                     do_sound(2);
                     break;
-            case 3: print_message(C_RED,1,"HIT"); 
+            case 3: print_message(C_RED,1,"HIT");
                     if (--computer_hits_left.sub==0) {
 	               print_message(C_GREEN,1,"You Sank My Submarine!");
                        do_sound(3);
 	            }
                     do_sound(1);
 	            computers_grid[x/2][y]=1;
-                    break; 
+                    break;
             case 4: print_message(C_RED,1,"HIT");
                     if (--computer_hits_left.batt==0) {
 		       print_message(C_GREEN,1,"You Sank My Battleship!");
@@ -182,19 +182,19 @@ void play_the_game(DATA *person)                     /* The Main Routine */
 		       do_sound(3);
 	            }
                     do_sound(1);
-                    computers_grid[x/2][y]=1; 
-                    break; 
+                    computers_grid[x/2][y]=1;
+                    break;
      }
 
-     place_grid(computers_grid,55,5,0);      
-   
+     place_grid(computers_grid,55,5,0);
+
      if( (computer_hits_left.sub==0) &&   /* Check to see if you won */
          (computer_hits_left.air==0) &&
          (computer_hits_left.batt==0) ) {
             print_message(C_RED,1,"YOU WON! PRESS A KEY TO CONTINUE");
 	    ch=getch();
             clear(); refresh();
-     set_color(C_BLUE,C_BOLD); 
+     set_color(C_BLUE,C_BOLD);
 printxy(2,2," '||' '|'  ..|''||   '||'  '|'    '|| '||'  '|' '||' '|.   '|'   ");
 printxy(2,3,"   || |   .|'    ||   ||    |      '|. '|.  .'   ||   |'|   |    ");
 printxy(2,4,"    ||    ||      ||  ||    |       ||  ||  |    ||   | '|. |    ");
@@ -202,7 +202,7 @@ printxy(2,5,"    ||    '|.     ||  ||    |        ||| |||     ||   |   |||    ")
 printxy(2,6,"   .||.    ''|...|'    '|..'          |   |     .||. .|.   '|    ");
      set_color(C_WHITE,C_BOLD);
         if(turn<person->best_score) {
-	   
+
 	   sprintf(text,"NEW BEST SCORE: %i turns.  Your previous best was %i",
 		   turn,person->best_score);
 	   person->best_score=turn;
@@ -216,30 +216,30 @@ printxy(2,6,"   .||.    ''|...|'    '|..'          |   |     .||. .|.   '|    ")
 	   person->times_played++;
            return;
      }
-      
+
      /* The Computer's Turn */
                                       /* 0=up 1=down 2=left 3=right */
      do_arrow(0,turn);
-      
+
       if ((prev_hit)&&(second_hit)) {    /* Complicated Algorythm */
 	 if (direct==0){                 /* To have computer follow hits */
 	    compy=compy-1; compx=oldcompx; /* And be intelligent.  Works */
 	    if(!INBOUNDSY(compy,compx)) direct++;  /* Pretty well */
 	 }
-	 
+
 	 if (direct==1) {
 	    compy=compy+1; compx=oldcompx;
 	    if(!INBOUNDSY(compy,compx)) direct++;
 	 }
-	 
+
 	 if (direct==2) {
 	    compx=compx-1; compy=oldcompy;
 	    if(!INBOUNDSX(compx,compy)) direct++;
 	 }
-	 
+
 	 if (direct==3) {
 	    compx=compx+1; compy=oldcompy;
-	    if (!INBOUNDSX(compx,compy)) direct++;  
+	    if (!INBOUNDSX(compx,compy)) direct++;
 	 }
       }
       else {
@@ -247,38 +247,38 @@ printxy(2,6,"   .||.    ''|...|'    '|..'          |   |     .||. .|.   '|    ")
 	    compy=oldcompy-1; compx=oldcompx;
 	    if(!INBOUNDSY(compy,compx)) direct++;
 	 }
-	 
+
 	 if (direct==1) {
 	    compy=oldcompy+1; compx=oldcompx;
 	    if(!INBOUNDSY(compy,compx)) direct++;
 	 }
-	 
+
 	 if (direct==2) {
 	    compx=oldcompx-1; compy=oldcompy;
 	    if(!INBOUNDSX(compx,compy)) direct++;
 	 }
-	 
+
 	 if (direct==3) {
 	    compx=oldcompx+1; compy=oldcompy;
-	    if (!INBOUNDSX(compx,compy)) direct++;  
+	    if (!INBOUNDSX(compx,compy)) direct++;
 	 }
- 
+
       }
       if (direct==4) prev_hit=0;
-      
+
       if (prev_hit==0) {
          direct=0;
 	 while( (users_grid[compx=rand()%8][compy=rand()%8]==1)
 	   || (users_grid[compx][compy]==2) );
       }
-      
+
     switch(users_grid[compx][compy]){       /* Switch to report hits/misses */
-      case 0: users_grid[compx][compy]=2; 
+      case 0: users_grid[compx][compy]=2;
               print_message(C_CYAN,0,"MISS");
               do_sound(2);
               second_hit=0;
               break;
-      case 3: print_message(C_RED,0,"HIT"); 
+      case 3: print_message(C_RED,0,"HIT");
               if(--user_hits_left.sub==0) {
 	        print_message(C_GREEN,0,"I Sank Your Submarine!");
                 do_sound(3);
@@ -290,7 +290,7 @@ printxy(2,6,"   .||.    ''|...|'    '|..'          |   |     .||. .|.   '|    ")
 	      }
               do_sound(1);
 	      users_grid[compx][compy]=1;
-              break; 
+              break;
       case 4: print_message(C_RED,0,"HIT");
               if(--user_hits_left.batt==0) {
 		 print_message(C_GREEN,0,"I Sank Your Battleship!");
@@ -311,23 +311,23 @@ printxy(2,6,"   .||.    ''|...|'    '|..'          |   |     .||. .|.   '|    ")
 		 prev_hit=0;
 	      }
               else if (prev_hit==1) second_hit=1;
-                   else {prev_hit=1; second_hit=0; 
+                   else {prev_hit=1; second_hit=0;
 		         oldcompx=compx; oldcompy=compy;
 		   }
               do_sound(1);
-              users_grid[compx][compy]=1; 
-              break; 
+              users_grid[compx][compy]=1;
+              break;
    }
 
    place_grid(users_grid,5,5,1);
-      
+
    if( (user_hits_left.sub==0) &&      /* Detect if the computer wins */
        (user_hits_left.air==0) &&
        (user_hits_left.batt==0) ) {
          print_message(C_RED,0,"I WON! Press any key to continue");
          ch=getch();
          clear(); refresh();
-      set_color(C_BLUE,C_BOLD);      
+      set_color(C_BLUE,C_BOLD);
 printxy(2,2,"'||' '|'  ..|''||   '||'  '|'    '||'       ..|''||    .|'''.|  '||''''|");
 printxy(2,3,"  || |   .|'    ||   ||    |      ||       .|'    ||   ||..  '   ||  .");
 printxy(2,4,"   ||    ||      ||  ||    |      ||       ||      ||   ''|||.   ||''|");
@@ -335,8 +335,6 @@ printxy(2,5,"   ||    '|.     ||  ||    |      ||       '|.     || .     '||  ||
 printxy(2,6,"  .||.    ''|...|'    '|..'      .||.....|  ''|...|'  |'....|'  .||.....|");
       set_color(C_RED,C_BOLD);
 
-      
-      
          sprintf(text,"I won in %i turns",turn);
          printxy(5,8,text);
          printxy(27,22,"Press Any Key To Continue");
@@ -363,13 +361,13 @@ int main_menu(DATA *person,MAIN_THINGY *main_thing)   /* The Main Menu */
 {
    int ch=0;
    char text[100];
-   
+
    while(1){
                                /* Play sound if first time through */
    if ((sound_device==1) && (first_time==0)) system("cat opening.au > /dev/audio &");
-   
-   if (!first_time) first_time=5;    
-   
+
+   if (!first_time) first_time=5;
+
    clear();                    /* Draw Menu */
    set_color(C_RED,C_BOLD);
    printxy(5,2,"SeaBattle Menu");
@@ -389,7 +387,7 @@ int main_menu(DATA *person,MAIN_THINGY *main_thing)   /* The Main Menu */
    set_color(C_RED,C_BOLD);
    printxy(5,10,"---->");
    ch=mvgetch(10,11);
-   
+
    switch(ch){              /* Execute the Various Cases */
     case '1': play_the_game(person); break;
     case '3': do_high_score("I Love Marie",156); break;
