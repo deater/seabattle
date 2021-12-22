@@ -178,7 +178,7 @@ void write_data_to_disk(MAIN_THINGY *main_thing)
    FILE *fff;
 
 
-   if( (fff=fopen("user_dat.sea","w"))==NULL) {printf("error"); return; 
+   if( (fff=fopen("user_dat.sea","w"))==NULL) {printf("error"); return;
    }
 
 
@@ -199,7 +199,7 @@ void write_data_to_disk(MAIN_THINGY *main_thing)
 
 DATA *enter_info(MAIN_THINGY *main_thing)   /* Enter linked list info */
 {
-   int ch=0,result,name_found=0,i;
+   int ch=0,name_found=0,i;
    char text[100];
    char first_name[100],last_name[100],addy1[100],addy2[100],phonenum[100];
    int times_played,best_score;
@@ -218,13 +218,13 @@ DATA *enter_info(MAIN_THINGY *main_thing)   /* Enter linked list info */
 
       printxy(2,3,"First Name: ");
       set_color(C_WHITE,C_NORMAL);
-      result=wgetnstr(stdscr,(char *)&temp,25);
+      wgetnstr(stdscr,(char *)&temp,25);
       strcpy(first_name,temp);
 
       set_color(C_WHITE,C_BOLD);
       printxy(2,4,"Last Name: ");
       set_color(C_WHITE,C_NORMAL);
-      result=wgetnstr(stdscr,(char *)&temp,50);
+      wgetnstr(stdscr,(char *)&temp,50);
       strcpy(last_name,temp);
 
       fifth_elem=main_thing->head;
@@ -244,19 +244,19 @@ DATA *enter_info(MAIN_THINGY *main_thing)   /* Enter linked list info */
 
       printxy(2,8,"Street Address: ");
       set_color(C_WHITE,C_NORMAL);
-      result=wgetnstr(stdscr,(char *)&temp,50);
+      wgetnstr(stdscr,(char *)&temp,50);
       strcpy(addy1,temp);
 
       set_color(C_WHITE,C_BOLD);
       printxy(2,9,"City/State/Zip: ");
       set_color(C_WHITE,C_NORMAL);
-      result=wgetnstr(stdscr,(char *)&temp,50);
+      wgetnstr(stdscr,(char *)&temp,50);
       strcpy(addy2,temp);
 
       set_color(C_WHITE,C_BOLD);
       printxy(2,10,"Phone Number: ");
       set_color(C_WHITE,C_NORMAL);
-      result=wgetnstr(stdscr,(char *)&temp,50);
+      wgetnstr(stdscr,(char *)&temp,50);
       strcpy(phonenum,temp);
 
       times_played=0;
@@ -319,58 +319,75 @@ DATA *enter_info(MAIN_THINGY *main_thing)   /* Enter linked list info */
    return datum;
 }
 
-void do_high_score(char *name,int turns)
-{                             /* High Score Routine.  Top 10 Scores */
-   FILE *fff;
-   char names[10][100],text[100];
-   int ch,scores[10],i;
-                                /* If not there, create one */
-   if( (fff=fopen("hiscore.sea","r+"))==NULL ){
-        if ( (fff=fopen("hiscore.sea","a+"))!=NULL) {
-	   fprintf(fff,"Vince\n50\nMarie\n55\nJohn\n56\n");
-	   fprintf(fff,"Gus\n57\nLizann\n58\nKevin\n59\n");
-	   fprintf(fff,"Hal\n60\nHairold\n61\nChipper\n62\nBob\n63\n");
-           fclose(fff);
+/* High Score Routine.  Top 10 Scores */
+void do_high_score(char *name,int turns) {
+
+	FILE *fff;
+	char names[10][100],text[1024];
+	int scores[10],i;
+
+	/* If not there, create one */
+	fff=fopen("hiscore.sea","r+");
+	if (fff==NULL) {
+		fff=fopen("hiscore.sea","a+");
+		if (fff!=NULL) {
+			/* These were all friends, guinea pigs, or */
+			/* inside jokes from 1997 */
+			fprintf(fff,"Vince\n50\nMarie\n55\nJohn\n56\n");
+			fprintf(fff,"Gus\n57\nLizann\n58\nKevin\n59\n");
+			fprintf(fff,"Hal\n60\nHairold\n61\nChipper\n62\nBob\n63\n");
+			fclose(fff);
+		}
 	}
-   }
-   else fclose(fff);
+	else {
+		fclose(fff);
+	}
 
-   if ( (fff=fopen("hiscore.sea","r"))!=NULL) {
-   for(i=0;i<10;i++)
-     fscanf(fff,"%s%i",names[i],&scores[i]);
-     fclose(fff);
-   }
-   clear();
-   refresh();
-   if(turns<scores[9]) {
-     i=8;                        /* If score should be on list, add it */
-     while( (turns<=scores[i])&&(i>=0) ) {
-        scores[i+1]=scores[i];
- 	strcpy(names[i+1],names[i]);
-	i--;
-     }
-     i++;
-     scores[i]=turns;
-     strcpy(names[i],name);
-     set_color(C_WHITE,C_BOLD);
-     sprintf(text,"%s got a new High Score, #%i",name,i+1);
-     printxy(20,1,text);
-     if ( (fff=fopen("hiscore.sea","w+"))!=NULL) {
-       for(i=0;i<10;i++) fprintf(fff,"%s\n%i",names[i],scores[i]);
-       fclose(fff);
-     }
-   }
+	fff=fopen("hiscore.sea","r");
+	if (fff!=NULL) {
+		for(i=0;i<10;i++) {
+			fscanf(fff,"%s%i",names[i],&scores[i]);
+		}
+		fclose(fff);
+	}
 
-   set_color(C_GREEN,C_BOLD);
-   printxy(34,4,"High Scores");
-   set_color(C_RED,C_BOLD);
-   for(i=0;i<10;i++){
-      sprintf(text,"%2i.  %i  %s",i+1,scores[i],names[i]);
-      printxy(20,i+6,text);
-   }
-   set_color(C_WHITE,C_NORMAL);
-   printxy(5,20,"Press any key to Continue");
-   ch=getch();
+	clear();
+	refresh();
+
+	/* If score should be on list, add it */
+	if (turns<scores[9]) {
+		i=8;
+		while( (turns<=scores[i])&&(i>=0) ) {
+			scores[i+1]=scores[i];
+			strcpy(names[i+1],names[i]);
+			i--;
+		}
+		i++;
+		scores[i]=turns;
+		strcpy(names[i],name);
+		set_color(C_WHITE,C_BOLD);
+		snprintf(text,100,"%s got a new High Score, #%i",name,i+1);
+		printxy(20,1,text);
+
+		fff=fopen("hiscore.sea","w+");
+		if (fff!=NULL) {
+			for(i=0;i<10;i++) {
+				fprintf(fff,"%s\n%i",names[i],scores[i]);
+			}
+			fclose(fff);
+		}
+	}
+
+	set_color(C_GREEN,C_BOLD);
+	printxy(34,4,"High Scores");
+	set_color(C_RED,C_BOLD);
+	for(i=0;i<10;i++){
+		snprintf(text,1024,"%2i.  %i  %s",i+1,scores[i],names[i]);
+		printxy(20,i+6,text);
+	}
+	set_color(C_WHITE,C_NORMAL);
+	printxy(5,20,"Press any key to Continue");
+	getch();
 }
 
 /*  ------->   END OF bdb.c by Vince Weaver <----------- */
