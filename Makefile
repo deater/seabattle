@@ -36,8 +36,7 @@ L_OPTS = -lncurses
 all:	seabattle
 
 clean:
-	rm -f *.o
-	rm -f seabattle
+	rm -f *.o *~ seabattle
 
 seabattle:	batt.o binp.o bgam.o bdb.o
 	$(CC) $(C_OPTS) -o seabattle batt.o binp.o bgam.o bdb.o $(L_OPTS)
