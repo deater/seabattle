@@ -24,21 +24,21 @@ MAIN_THINGY *make_main_thingy(void)    /* Declare the MAIN THINGY */
 int my_string_comp(const char *cs, const char *ct)
 {                         /* partly borrowed /usr/src/linux/lib/string.c */
    register signed char __res;   /* like strcmp, but case-insensitive    */
-   
+
    while(1) {
       if ((__res = toupper(*cs)-toupper(*ct++))!=0 || !*cs++)
 	break;
    }
    return __res;
 }
-   
+
 DATA *insert_new_data(MAIN_THINGY *main_thing,DATA *datum)
 {                                /* Insert Data... Sorted Alphabetically */
    ELEMENT *new_elem,*old_elem;  /* Automatically sorts it */
-     
-   if ( ( new_elem=(ELEMENT *)malloc(sizeof(ELEMENT)) )==NULL) 
+
+   if ( ( new_elem=(ELEMENT *)malloc(sizeof(ELEMENT)) )==NULL)
         out_of_memory_panic();
-   
+
    new_elem->data=datum;
    main_thing->num_elements++;
 
@@ -47,11 +47,11 @@ DATA *insert_new_data(MAIN_THINGY *main_thing,DATA *datum)
      new_elem->prev=new_elem->next=NULL;
      return new_elem->data;
    }
-   
+
    old_elem=main_thing->head;
                                       /* Traverse List */
  while( (old_elem!=NULL) ){           /* Inserting before if name less than*/
-   if ((my_string_comp( new_elem->data->last_name, 
+   if ((my_string_comp( new_elem->data->last_name,
 		        old_elem->data->last_name ) )<0)  {
       new_elem->next=old_elem;
       new_elem->prev=old_elem->prev;
@@ -61,7 +61,7 @@ DATA *insert_new_data(MAIN_THINGY *main_thing,DATA *datum)
       return new_elem->data;
    }
    if ( (my_string_comp( new_elem->data->last_name,
-		        old_elem->data->last_name) ==0) &&  
+		        old_elem->data->last_name) ==0) &&
         (my_string_comp(new_elem->data->first_name,
 			old_elem->data->first_name) <=0) ) {
        new_elem->next=old_elem;
@@ -75,13 +75,13 @@ DATA *insert_new_data(MAIN_THINGY *main_thing,DATA *datum)
      new_elem->next=old_elem->next;
      new_elem->prev=old_elem;
      old_elem->next=new_elem;
-     if(new_elem->next==NULL) main_thing->tail=new_elem;  
+     if(new_elem->next==NULL) main_thing->tail=new_elem;
      return new_elem->data;
    }
    old_elem=old_elem->next;
  }
  return old_elem->data;          /* This prevents a WARNING */
-   
+
 }
 
 
@@ -89,11 +89,11 @@ char *read_string_from_disk(FILE *fff,char *string)
 {                                 /* My own, SUPERIOR version of fgets */
   int ch,i=0;                     /* Handles \n much better */
   char temp[100];
-   
+
   strcpy(temp,"");
   while ((ch=fgetc(fff))==' ');
   while ( (ch!='\n') && (ch!=EOF) ) {
-     temp[i]=ch; i++;  
+     temp[i]=ch; i++;
      ch=fgetc(fff);
   }
   if(ch==EOF) return NULL;
@@ -116,9 +116,9 @@ void read_data_from_disk(MAIN_THINGY *main_thing)
    DATA *datum;
 
    FILE *fff;
-   
+
    if( (fff=fopen("user_dat.sea","r+"))==NULL) return;
-   
+
    while(!feof(fff)){
       if(read_string_from_disk(fff,(char*)&temp)==NULL) return;
       strcpy(first_name,temp);
@@ -130,33 +130,33 @@ void read_data_from_disk(MAIN_THINGY *main_thing)
       strcpy(addy2,temp);
       if(read_string_from_disk(fff,(char*)&temp)==NULL) return;
       strcpy(phonenum,temp);
-   
+
       fscanf(fff,"%i%i",&times_played,&best_score);
-   
-      
-   if( (pt_f_name=malloc(strlen(first_name)+1))==NULL) 
+
+
+   if( (pt_f_name=malloc(strlen(first_name)+1))==NULL)
 	out_of_memory_panic();
    strcpy(pt_f_name,first_name);
-      
+
    if( (pt_l_name=malloc(strlen(last_name)+1))==NULL)
 	out_of_memory_panic();
    strcpy(pt_l_name,last_name);
-   
-   if( (pt_addy1=malloc(strlen(addy1)+1))==NULL) 
+
+   if( (pt_addy1=malloc(strlen(addy1)+1))==NULL)
 	out_of_memory_panic();
    strcpy(pt_addy1,addy1);
-      
-   if ( (pt_addy2=malloc(strlen(addy2)+1))==NULL) 
+
+   if ( (pt_addy2=malloc(strlen(addy2)+1))==NULL)
 	out_of_memory_panic();
    strcpy(pt_addy2,addy2);
-      
-   if ( (pt_phonenum=malloc(strlen(phonenum)+1))==NULL) 
+
+   if ( (pt_phonenum=malloc(strlen(phonenum)+1))==NULL)
 	out_of_memory_panic();
    strcpy(pt_phonenum,phonenum);
-   
-   if ( (datum=(DATA *)malloc(sizeof(DATA)) )==NULL) 
+
+   if ( (datum=(DATA *)malloc(sizeof(DATA)) )==NULL)
 	out_of_memory_panic();
-      
+
    datum->first_name=pt_f_name;
    datum->last_name=pt_l_name;
    datum->addy1=pt_addy1;
@@ -164,9 +164,9 @@ void read_data_from_disk(MAIN_THINGY *main_thing)
    datum->phonenum=pt_phonenum;
    datum->times_played=times_played;
    datum->best_score=best_score;
-   insert_new_data(main_thing,datum);   
+   insert_new_data(main_thing,datum);
    }
-   
+
    fclose(fff);
 }
 
@@ -176,15 +176,15 @@ void write_data_to_disk(MAIN_THINGY *main_thing)
    DATA *data;
    int i;
    FILE *fff;
-   
-   
+
+
    if( (fff=fopen("user_dat.sea","w"))==NULL) {printf("error"); return; 
    }
-   
-   
+
+
    fifth_elem=main_thing->head;
    for(i=0;i<main_thing->num_elements;i++)
-     {  
+     {
 	data=fifth_elem->data;
 
 	fprintf(fff,"%s\n%s\n",data->first_name,data->last_name);
@@ -198,8 +198,8 @@ void write_data_to_disk(MAIN_THINGY *main_thing)
 
 
 DATA *enter_info(MAIN_THINGY *main_thing)   /* Enter linked list info */
-{                                 
-   int ch=0,result,name_found=0,i;               
+{
+   int ch=0,result,name_found=0,i;
    char text[100];
    char first_name[100],last_name[100],addy1[100],addy2[100],phonenum[100];
    int times_played,best_score;
@@ -207,28 +207,28 @@ DATA *enter_info(MAIN_THINGY *main_thing)   /* Enter linked list info */
    char *pt_f_name,*pt_l_name,*pt_addy1,*pt_addy2,*pt_phonenum;
    DATA *datum;
    ELEMENT *fifth_elem;
-   
+
    read_data_from_disk(main_thing);     /* Load old data */
-   do{                              
+   do {
       name_found=0;          /* Loop through */
       clear();
       echo();
       set_color(C_WHITE,C_BOLD);
       printxy(2,1,"Please Enter Some Information (Linked List part of Project)");
-            
+
       printxy(2,3,"First Name: ");
       set_color(C_WHITE,C_NORMAL);
       result=wgetnstr(stdscr,(char *)&temp,25);
       strcpy(first_name,temp);
-      
+
       set_color(C_WHITE,C_BOLD);
       printxy(2,4,"Last Name: ");
       set_color(C_WHITE,C_NORMAL);
       result=wgetnstr(stdscr,(char *)&temp,50);
       strcpy(last_name,temp);
-   
+
       fifth_elem=main_thing->head;
-      
+
       for(i=0;i<main_thing->num_elements;i++) {
 	 if((my_string_comp(fifth_elem->data->last_name,last_name)==0)&&
 	   (my_string_comp(fifth_elem->data->first_name,first_name)==0))
@@ -236,56 +236,56 @@ DATA *enter_info(MAIN_THINGY *main_thing)   /* Enter linked list info */
 	      datum=fifth_elem->data;
 	      name_found=1;
 	   }
-         fifth_elem=fifth_elem->next;	 
+         fifth_elem=fifth_elem->next;
       }
       set_color(C_WHITE,C_BOLD);
   if(!name_found) {
       printxy(2,6,"New Player! Please enter the following info (or leave blank)");
-      
+
       printxy(2,8,"Street Address: ");
       set_color(C_WHITE,C_NORMAL);
       result=wgetnstr(stdscr,(char *)&temp,50);
       strcpy(addy1,temp);
-  
+
       set_color(C_WHITE,C_BOLD);
       printxy(2,9,"City/State/Zip: ");
       set_color(C_WHITE,C_NORMAL);
       result=wgetnstr(stdscr,(char *)&temp,50);
       strcpy(addy2,temp);
-   
+
       set_color(C_WHITE,C_BOLD);
       printxy(2,10,"Phone Number: ");
       set_color(C_WHITE,C_NORMAL);
       result=wgetnstr(stdscr,(char *)&temp,50);
       strcpy(phonenum,temp);
-   
+
       times_played=0;
       best_score=65;
-   
-   if( (pt_f_name=malloc(strlen(first_name)+1))==NULL) 
+
+   if( (pt_f_name=malloc(strlen(first_name)+1))==NULL)
         out_of_memory_panic();
    strcpy(pt_f_name,first_name);
-   
+
    if( (pt_l_name=malloc(strlen(last_name)+1))==NULL)
         out_of_memory_panic();
    strcpy(pt_l_name,last_name);
-   
-   
+
+
    if( (pt_addy1=malloc(strlen(addy1)+1))==NULL)
         out_of_memory_panic();
    strcpy(pt_addy1,addy1);
-   
-   if ( (pt_addy2=malloc(strlen(addy2)+1))==NULL) 
+
+   if ( (pt_addy2=malloc(strlen(addy2)+1))==NULL)
         out_of_memory_panic();
    strcpy(pt_addy2,addy2);
-   
-   if ( (pt_phonenum=malloc(strlen(phonenum)+1))==NULL) 
+
+   if ( (pt_phonenum=malloc(strlen(phonenum)+1))==NULL)
          out_of_memory_panic();
    strcpy(pt_phonenum,phonenum);
-   
-   if ( (datum=(DATA *)malloc(sizeof(DATA)) )==NULL) 
+
+   if ( (datum=(DATA *)malloc(sizeof(DATA)) )==NULL)
          out_of_memory_panic();
-   
+
    datum->first_name=pt_f_name;
    datum->last_name=pt_l_name;
    datum->addy1=pt_addy1;
@@ -306,9 +306,9 @@ DATA *enter_info(MAIN_THINGY *main_thing)   /* Enter linked list info */
      printxy(2,11,text);
      sprintf(text,"Times Played: %i  Best Score: %i",datum->times_played,datum->best_score);
      printxy(2,13,text);
-     
+
   }
-    
+
       set_color(C_WHITE,C_BOLD);
       printxy(2,15,"Is the above correct?");
       set_color(C_WHITE,C_NORMAL);
@@ -334,7 +334,7 @@ void do_high_score(char *name,int turns)
 	}
    }
    else fclose(fff);
-   
+
    if ( (fff=fopen("hiscore.sea","r"))!=NULL) {
    for(i=0;i<10;i++)
      fscanf(fff,"%s%i",names[i],&scores[i]);
@@ -352,7 +352,7 @@ void do_high_score(char *name,int turns)
      i++;
      scores[i]=turns;
      strcpy(names[i],name);
-     set_color(C_WHITE,C_BOLD); 
+     set_color(C_WHITE,C_BOLD);
      sprintf(text,"%s got a new High Score, #%i",name,i+1);
      printxy(20,1,text);
      if ( (fff=fopen("hiscore.sea","w+"))!=NULL) {
@@ -360,7 +360,7 @@ void do_high_score(char *name,int turns)
        fclose(fff);
      }
    }
-   
+
    set_color(C_GREEN,C_BOLD);
    printxy(34,4,"High Scores");
    set_color(C_RED,C_BOLD);
