@@ -352,11 +352,11 @@ int get_users_grid(int grid[8][8]) {
 	               }
 	               break;
 	          case 'E': case 'e': case KEY_RIGHT:
-		       if (x>8-(shiptype+1)) {
-			  invalid_message(INVALID_LEAVES_BOARD); break;
+		       if (x>8-(shiptype+3)) {
+			  invalid_message(INVALID_LEAVES_BOARD);
 		       }
 		       else if (test_overlap(grid,x,y,1,0,shiptype+3) ){
-		          invalid_message(INVALID_OVERLAPS); break;
+		          invalid_message(INVALID_OVERLAPS);
 		       }
 		       else {
 			  put_ship(grid,x,y,1,0,shiptype+3);
