@@ -17,11 +17,16 @@
 #C_OPTS = 
 #L_OPTS = -lcurses
 
-#On FreeBSD/Linux, uncomment the following
-#
 ifndef PREFIX
 PREFIX = .
 endif
+
+ifndef CFLAGS
+CFLAGS = -O2 -Wall -g
+endif
+
+#On FreeBSD/Linux, uncomment the following
+#
 
 PLATFORM = FreeBSD/Linux
 DATADIR = ${PREFIX}/share/seabattle
