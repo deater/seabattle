@@ -9,6 +9,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "batt.h"
 
@@ -254,126 +255,145 @@ DATA *enter_info(MAIN_THINGY *main_thing) {
 	/* Load old data */
 	read_data_from_disk(main_thing);
 
-	/* Loop through */
-	do {
-		name_found=0;
+	clear();
+	snprintf(temp,100,
+		"Found user name %s, press E to use an alternate identity",
+		getlogin());
+	printxy(2,1,temp);
+	ch=getch();
+
+	if ((ch!='E') && (ch!='e')) {
+		strncpy(first_name,getlogin(),99);
+		strncpy(last_name,"",100);
 		clear();
 		echo();
-		set_color(C_WHITE,C_BOLD);
-		printxy(2,1,"Please Enter Some Information "
-				"(Linked List part of Project)");
 
-		printxy(2,3,"First Name: ");
-		set_color(C_WHITE,C_NORMAL);
-		wgetnstr(stdscr,(char *)&temp,25);
-		strcpy(first_name,temp);
+		goto skip_name;
+	}
 
-		set_color(C_WHITE,C_BOLD);
-		printxy(2,4,"Last Name: ");
+try_again_loop:
+	name_found=0;
+
+	clear();
+	echo();
+	set_color(C_WHITE,C_BOLD);
+	printxy(2,1,"Please Enter Some Information "
+				"(this was required for the class project)");
+
+	printxy(2,3,"First Name: ");
+	set_color(C_WHITE,C_NORMAL);
+	wgetnstr(stdscr,(char *)&temp,25);
+	strcpy(first_name,temp);
+
+	set_color(C_WHITE,C_BOLD);
+	printxy(2,4,"Last Name: ");
+	set_color(C_WHITE,C_NORMAL);
+	wgetnstr(stdscr,(char *)&temp,50);
+	strcpy(last_name,temp);
+
+skip_name:
+
+	fifth_elem=main_thing->head;
+
+	for(i=0;i<main_thing->num_elements;i++) {
+		if ((my_string_comp(fifth_elem->data->last_name,
+			last_name)==0) &&
+			(my_string_comp(fifth_elem->data->first_name,
+			first_name)==0)) {
+
+			datum=fifth_elem->data;
+			name_found=1;
+		}
+		fifth_elem=fifth_elem->next;
+	}
+	set_color(C_WHITE,C_BOLD);
+
+	if (!name_found) {
+		printxy(2,6,"New Player! Please enter the following"
+			" info (or leave blank)");
+
+		printxy(2,8,"Street Address: ");
 		set_color(C_WHITE,C_NORMAL);
 		wgetnstr(stdscr,(char *)&temp,50);
-		strcpy(last_name,temp);
+		strcpy(addy1,temp);
 
-		fifth_elem=main_thing->head;
-
-		for(i=0;i<main_thing->num_elements;i++) {
-			if ((my_string_comp(fifth_elem->data->last_name,
-				last_name)==0) &&
-				(my_string_comp(fifth_elem->data->first_name,
-				first_name)==0)) {
-
-				datum=fifth_elem->data;
-				name_found=1;
-			}
-			fifth_elem=fifth_elem->next;
-		}
 		set_color(C_WHITE,C_BOLD);
+		printxy(2,9,"City/State/Zip: ");
+		set_color(C_WHITE,C_NORMAL);
+		wgetnstr(stdscr,(char *)&temp,50);
+		strcpy(addy2,temp);
 
-		if (!name_found) {
-			printxy(2,6,"New Player! Please enter the following"
-				" info (or leave blank)");
+		set_color(C_WHITE,C_BOLD);
+		printxy(2,10,"Phone Number: ");
+		set_color(C_WHITE,C_NORMAL);
+		wgetnstr(stdscr,(char *)&temp,50);
+		strcpy(phonenum,temp);
 
-			printxy(2,8,"Street Address: ");
-			set_color(C_WHITE,C_NORMAL);
-			wgetnstr(stdscr,(char *)&temp,50);
-			strcpy(addy1,temp);
+		times_played=0;
+		best_score=65;
 
-			set_color(C_WHITE,C_BOLD);
-			printxy(2,9,"City/State/Zip: ");
-			set_color(C_WHITE,C_NORMAL);
-			wgetnstr(stdscr,(char *)&temp,50);
-			strcpy(addy2,temp);
-
-			set_color(C_WHITE,C_BOLD);
-			printxy(2,10,"Phone Number: ");
-			set_color(C_WHITE,C_NORMAL);
-			wgetnstr(stdscr,(char *)&temp,50);
-			strcpy(phonenum,temp);
-
-			times_played=0;
-			best_score=65;
-
-			if ( (pt_f_name=malloc(strlen(first_name)+1))==NULL) {
-				out_of_memory_panic();
-			}
-			strcpy(pt_f_name,first_name);
-
-			if ( (pt_l_name=malloc(strlen(last_name)+1))==NULL) {
-				out_of_memory_panic();
-			}
-			strcpy(pt_l_name,last_name);
-
-			if( (pt_addy1=malloc(strlen(addy1)+1))==NULL) {
-				out_of_memory_panic();
-			}
-			strcpy(pt_addy1,addy1);
-
-			if ( (pt_addy2=malloc(strlen(addy2)+1))==NULL) {
-				out_of_memory_panic();
-			}
-			strcpy(pt_addy2,addy2);
-
-			if ( (pt_phonenum=malloc(strlen(phonenum)+1))==NULL) {
-				out_of_memory_panic();
-			}
-			strcpy(pt_phonenum,phonenum);
-
-			if ( (datum=(DATA *)malloc(sizeof(DATA)) )==NULL) {
-				out_of_memory_panic();
-			}
-
-			datum->first_name=pt_f_name;
-			datum->last_name=pt_l_name;
-			datum->addy1=pt_addy1;
-			datum->addy2=pt_addy2;
-			datum->phonenum=pt_phonenum;
-			datum->times_played=times_played;
-			datum->best_score=best_score;
+		if ( (pt_f_name=malloc(strlen(first_name)+1))==NULL) {
+			out_of_memory_panic();
 		}
-		else {
-			/* Found previous entry */
-			printxy(2,6,"Previous Entry.  "
+		strcpy(pt_f_name,first_name);
+
+		if ( (pt_l_name=malloc(strlen(last_name)+1))==NULL) {
+			out_of_memory_panic();
+		}
+		strcpy(pt_l_name,last_name);
+
+		if( (pt_addy1=malloc(strlen(addy1)+1))==NULL) {
+			out_of_memory_panic();
+			}
+		strcpy(pt_addy1,addy1);
+
+		if ( (pt_addy2=malloc(strlen(addy2)+1))==NULL) {
+			out_of_memory_panic();
+		}
+		strcpy(pt_addy2,addy2);
+
+		if ( (pt_phonenum=malloc(strlen(phonenum)+1))==NULL) {
+			out_of_memory_panic();
+		}
+		strcpy(pt_phonenum,phonenum);
+
+		if ( (datum=(DATA *)malloc(sizeof(DATA)) )==NULL) {
+			out_of_memory_panic();
+		}
+
+		datum->first_name=pt_f_name;
+		datum->last_name=pt_l_name;
+		datum->addy1=pt_addy1;
+		datum->addy2=pt_addy2;
+		datum->phonenum=pt_phonenum;
+		datum->times_played=times_played;
+		datum->best_score=best_score;
+	}
+	else {
+		/* Found previous entry */
+		printxy(2,6,"Previous Entry.  "
 				"If the below is not correct, "
 				"Please use a different Name");
-			sprintf(text,"%s %s",datum->first_name,
+		sprintf(text,"%s %s",datum->first_name,
 						datum->last_name);
-			printxy(2,8,text);
-			sprintf(text,"%s",datum->addy1);
-			printxy(2,9,text);
-			sprintf(text,"%s",datum->addy2);
-			printxy(2,10,text);
-			sprintf(text,"%s",datum->phonenum);
-			printxy(2,11,text);
-			sprintf(text,"Times Played: %i  Best Score: %i",
-				datum->times_played,datum->best_score);
-			printxy(2,13,text);
-		}
+		printxy(2,8,text);
+		sprintf(text,"%s",datum->addy1);
+		printxy(2,9,text);
+		sprintf(text,"%s",datum->addy2);
+		printxy(2,10,text);
+		sprintf(text,"%s",datum->phonenum);
+		printxy(2,11,text);
+		sprintf(text,"Times Played: %i  Best Score: %i",
+			datum->times_played,datum->best_score);
+		printxy(2,13,text);
+	}
 
-		set_color(C_WHITE,C_BOLD);
-		printxy(2,15,"Is the above correct?");
-		set_color(C_WHITE,C_NORMAL);
-		ch=mvgetch(15,24);
-	} while (toupper(ch)!='Y');
+	set_color(C_WHITE,C_BOLD);
+	printxy(2,15,"Is the above correct?");
+	set_color(C_WHITE,C_NORMAL);
+	ch=mvgetch(15,24);
+
+	if(toupper(ch)!='Y') goto try_again_loop;
 
 	noecho();
 

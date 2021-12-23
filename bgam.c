@@ -390,7 +390,7 @@ printxy(2,6,"   .||.    ''|...|'    '|..'          |   |     .||. .|.   '|    ")
 					orighitx=compx;
 					orighity=compy;
 				}
-			do_sound(SOUND_HIT);
+				do_sound(SOUND_HIT);
 			}
 			break;
 		case GRID_BATTLESHIP:
