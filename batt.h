@@ -80,20 +80,18 @@ void clear_status_lines(void);
 /* bgam.c */
 DATA *enter_info(MAIN_THINGY *main_thing);
 void do_arrow(int whos_turn,int num_turns);
-void print_sound_status();
+void print_sound_status(void);
 void draw_the_screen(DATA *person,int num_turns);
 void print_message(int color,int person,char *message);
 void play_the_game(DATA *person);
-void do_options();
-void do_help();
+void do_options(void);
+void do_help(void);
 int main_menu(DATA *person,MAIN_THINGY *main_thing);
+
 /* bdb.c */
-void out_of_memory_panic();
+void out_of_memory_panic(void);
 MAIN_THINGY *make_main_thingy(void);
-char *read_string_from_disk(FILE *fff,char *string);
-int my_string_comp(const char *cs, const char *ct);
-DATA *insert_new_data(MAIN_THINGY *main_thing,DATA *datum);
-void read_data_from_disk(MAIN_THINGY *main_thing);
 void write_data_to_disk(MAIN_THINGY *main_thing);
 void do_high_score(char *name,int turn);
+
 /* THE END *******************  batt.h *************  by Vince Weaver */

@@ -31,7 +31,7 @@ MAIN_THINGY *make_main_thingy(void) {
 
 /* partly borrowed /usr/src/linux/lib/string.c */
 /* like strcmp, but case-insensitive    */
-int my_string_comp(const char *cs, const char *ct) {
+static int my_string_comp(const char *cs, const char *ct) {
 
 	signed char res;
 
@@ -43,7 +43,7 @@ int my_string_comp(const char *cs, const char *ct) {
 
 /* Insert Data... Sorted Alphabetically */
 /* Automatically sorts it */
-DATA *insert_new_data(MAIN_THINGY *main_thing,DATA *datum) {
+static DATA *insert_new_data(MAIN_THINGY *main_thing,DATA *datum) {
 
 	ELEMENT *new_elem,*old_elem;
 
@@ -120,7 +120,7 @@ DATA *insert_new_data(MAIN_THINGY *main_thing,DATA *datum) {
 /* My own, SUPERIOR version of fgets */
 /* Handles \n much better */
 /* 2021 vince: urgh this sounds like a bad idea */
-char *read_string_from_disk(FILE *fff,char *string) {
+static char *read_string_from_disk(FILE *fff,char *string) {
 
 	int ch,i=0;
 	char temp[100];
@@ -138,7 +138,7 @@ char *read_string_from_disk(FILE *fff,char *string) {
 }
 
 /* Read linked list from disk */
-void read_data_from_disk(MAIN_THINGY *main_thing) {
+static void read_data_from_disk(MAIN_THINGY *main_thing) {
 
 	char temp[100];
 	char first_name[100];
