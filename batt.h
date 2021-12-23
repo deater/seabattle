@@ -28,10 +28,6 @@ extern int sound_device;
 #define SOUND_DEVICE_DEV_AUDIO	1
 #define SOUND_DEVICE_APLAY	2
 
-#define INBOUNDSX(x,y) ( (x>=0) && (x<=7) && (users_grid[x][y]!=1) && (users_grid[x][y]!=2) )
-#define INBOUNDSY(y,x) ( (y>=0) && (y<=7) && (users_grid[x][y]!=1) && (users_grid[x][y]!=2) )
-
-
 typedef struct  {
 	char *first_name;
 	char *last_name;

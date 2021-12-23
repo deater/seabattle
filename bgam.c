@@ -118,6 +118,22 @@ static void print_message(int color,int person,char *message) {
 	}
 }
 
+static int inboundsx(int x, int y,int users_grid[8][8]) {
+	if ( (x>=0) && (x<=7) &&
+		(users_grid[x][y]!=1) && (users_grid[x][y]!=2) ) {
+		return 1;
+	}
+	return 0;
+}
+
+static int inboundsy(int x, int y,int users_grid[8][8]) {
+
+	if ( (y>=0) && (y<=7) &&
+		(users_grid[x][y]!=1) && (users_grid[x][y]!=2) ) {
+		return 1;
+	}
+	return 0;
+}
 
 /* The Main Routine */
 static void play_the_game(DATA *person) {
@@ -252,43 +268,43 @@ printxy(2,6,"   .||.    ''|...|'    '|..'          |   |     .||. .|.   '|    ")
       if ((prev_hit)&&(second_hit)) {    /* Complicated Algorythm */
 	 if (direct==0){                 /* To have computer follow hits */
 	    compy=compy-1; compx=oldcompx; /* And be intelligent.  Works */
-	    if(!INBOUNDSY(compy,compx)) direct++;  /* Pretty well */
+	    if(!inboundsy(compy,compx,users_grid)) direct++;  /* Pretty well */
 	 }
 
 	 if (direct==1) {
 	    compy=compy+1; compx=oldcompx;
-	    if(!INBOUNDSY(compy,compx)) direct++;
+	    if(!inboundsy(compy,compx,users_grid)) direct++;
 	 }
 
 	 if (direct==2) {
 	    compx=compx-1; compy=oldcompy;
-	    if(!INBOUNDSX(compx,compy)) direct++;
+	    if(!inboundsx(compx,compy,users_grid)) direct++;
 	 }
 
 	 if (direct==3) {
 	    compx=compx+1; compy=oldcompy;
-	    if (!INBOUNDSX(compx,compy)) direct++;
+	    if (!inboundsx(compx,compy,users_grid)) direct++;
 	 }
       }
       else {
 	 if (direct==0){
 	    compy=oldcompy-1; compx=oldcompx;
-	    if(!INBOUNDSY(compy,compx)) direct++;
+	    if(!inboundsy(compy,compx,users_grid)) direct++;
 	 }
 
 	 if (direct==1) {
 	    compy=oldcompy+1; compx=oldcompx;
-	    if(!INBOUNDSY(compy,compx)) direct++;
+	    if(!inboundsy(compy,compx,users_grid)) direct++;
 	 }
 
 	 if (direct==2) {
 	    compx=oldcompx-1; compy=oldcompy;
-	    if(!INBOUNDSX(compx,compy)) direct++;
+	    if(!inboundsx(compx,compy,users_grid)) direct++;
 	 }
 
 	 if (direct==3) {
 	    compx=oldcompx+1; compy=oldcompy;
-	    if (!INBOUNDSX(compx,compy)) direct++;
+	    if (!inboundsx(compx,compy,users_grid)) direct++;
 	 }
 
       }
