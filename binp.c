@@ -210,7 +210,22 @@ void do_sound(int which_one) {
 	}
 }
 
+#define INVALID_LEAVES_BOARD	0
+#define INVALID_OVERLAPS	1
 
+/* Prints some simple messages */
+static void invalid_message(int message) {
+
+	clear_status_lines();
+	set_color(C_BLUE,C_BOLD);
+	do_sound(SOUND_ERROR);
+	if (message==0) {
+		printxy(10,20,"Invalid! Leaves Board! Try Again.");
+	}
+	if (message==1) {
+		printxy(10,20,"Invalid! Overlaps another ship! Try Again.");
+	}
+}
 
 
 /* Main function to allow user */
@@ -302,10 +317,10 @@ int get_users_grid(int grid[8][8]) {
 					switch (ch2) {
 	          case 'N': case 'n': case KEY_UP :
 		       if (y<shiptype+2) {
-			  simple_message(0); break;
+			  invalid_message(INVALID_LEAVES_BOARD); break;
 		       }
 		       else if (test_overlap(grid,x,y,0,-1,shiptype+3) ){
-		           simple_message(1); break;
+		           invalid_message(INVALID_OVERLAPS); break;
 		       }
 		       else {
 			   put_ship(grid,x,y,0,-1,shiptype+3);
@@ -314,10 +329,10 @@ int get_users_grid(int grid[8][8]) {
 		       break;
 	          case 'S': case 's': case KEY_DOWN:
 	               if (y>8-(shiptype+3)) {
-			  simple_message(0); break;
+			  invalid_message(INVALID_LEAVES_BOARD); break;
 		       }
 	               else if (test_overlap(grid,x,y,0,1,shiptype+3) ){
-		          simple_message(1); break;
+		          invalid_message(INVALID_OVERLAPS); break;
 		       }
 	               else {
 			  put_ship(grid,x,y,0,1,shiptype+3);
@@ -326,10 +341,10 @@ int get_users_grid(int grid[8][8]) {
 	               break;
 	          case 'E': case 'e': case KEY_RIGHT:
 		       if (x>8-(shiptype+1)) {
-			  simple_message(0); break;
+			  invalid_message(INVALID_LEAVES_BOARD); break;
 		       }
 		       else if (test_overlap(grid,x,y,1,0,shiptype+3) ){
-		          simple_message(1); break;
+		          invalid_message(INVALID_OVERLAPS); break;
 		       }
 		       else {
 			  put_ship(grid,x,y,1,0,shiptype+3);
@@ -338,10 +353,10 @@ int get_users_grid(int grid[8][8]) {
 	               break;
 		  case 'W': case 'w': case KEY_LEFT:
 	               if (x<(shiptype+2)) {
-			  simple_message(0); break;
+			  invalid_message(INVALID_LEAVES_BOARD); break;
 		       }
 	               else if (test_overlap(grid,x,y,-1,0,shiptype+3)){
-	                  simple_message(1); break;
+	                  invalid_message(INVALID_OVERLAPS); break;
 	               }
 	               else {
 			  put_ship(grid,x,y,-1,0,shiptype+3);
@@ -377,19 +392,7 @@ int get_users_grid(int grid[8][8]) {
 	return 0;
 }
 
-/* Prints some simple messages */
-void simple_message(int message) {
 
-	clear_status_lines();
-	set_color(C_BLUE,C_BOLD);
-	do_sound(SOUND_ERROR);
-	if (message==0) {
-		printxy(10,20,"Invalid! Leaves Board! Try Again.");
-	}
-	if (message==1) {
-		printxy(10,20,"Invalid! Overlaps another ship! Try Again.");
-	}
-}
 
 /* Clear the bottom lines */
 void clear_status_lines(void) {

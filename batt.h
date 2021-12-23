@@ -80,7 +80,7 @@ void put_dumb_instructions(void);
 void do_sound(int which_one);
 void clear_status_lines(void);
 void purge_grid(int grid[8][8],int type);
-void simple_message(int message);
+//void simple_message(int message);
 /* bgam.c */
 DATA *enter_info(MAIN_THINGY *main_thing);
 void do_arrow(int whos_turn,int num_turns);
