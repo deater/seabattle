@@ -76,7 +76,6 @@ void draw_opening(void) {
 
 	int i;
 	char ch;
-	FILE *ftemp;
 
 	set_color(C_BLUE,C_BOLD);
 	printxy(0,0,".|'''|                    '||'''|,            ||      ||    '||`");
@@ -525,17 +524,6 @@ int place_ship(int grid[8][8],int size) {
 
 	return -1;
 }
-
-/* Draw very simple screen */
-/* will be fancier with actual game */
-static void display_screen(int users_grid[8][8], int computers_grid[8][8]) {
-	place_grid(users_grid,10,5,1);
-	place_grid(computers_grid,50,5,1);
-	refresh();
-}
-
-
-
 
 /* Display a grid on the screen */
 void place_grid(int grid[8][8],int x,int y,int show_ships) {

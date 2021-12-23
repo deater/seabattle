@@ -16,13 +16,13 @@
 /* Draws the arrow pointing to */
 /* Whoever's turn it is */
 /* 0=Computer, 1=Player */
-static void do_arrow(int whos_turn, int turn_num) {
+static void do_arrow(int whose_turn, int turn_num) {
 
 	char text[20];
 
 	set_color(C_GREEN,C_BOLD);
 	printxy(36,13,"TURN");
-	if (whos_turn) {
+	if (whose_turn) {
 		set_color(C_RED,C_BOLD);
 		printxy(36,14,"<");
 		set_color(C_GREEN,C_NORMAL);
@@ -263,6 +263,7 @@ printxy(2,6,"   .||.    ''|...|'    '|..'          |   |     .||. .|.   '|    ")
 
 	/* Indicate computer's turn */
 	do_arrow(0,turn);
+	refresh();
 
 	/* pause for effect to give illusion of thinking? */
 	sleep(1);
