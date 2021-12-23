@@ -1,0 +1,10 @@
++ Fix calls to "aplay -q" on systems where the sound card isn't set up
+  properly and dumps lots of debug to /dev/stderr.
+  Maybe re-route stderr to /dev/null?
+
++ Make the highscore parsing a lot more robust
+
++ Improve AI, currently it stops searching after it sinks one ship
+  even if it accidentally hit another along the way
+
+

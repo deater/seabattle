@@ -33,10 +33,17 @@ Background:
 Compiling and Installation Instructions:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+  Pre-requisites
+      Linux:
+           you'll need to have ncurses installed
+              (debian: "apt-get install libncurses-dev")
+           you'll need to have aplay installed for sound
+              (debian: "apt-get install alsa-utils")
+
   For Unix (Compiling from Source):
-  
+
       Untar the file.  All the untarred files should end up in a directory
-      called "seabattle-1.0".
+      called "seabattle-1.1".
   
       Edit the Makefile.  Be sure to uncomment the lines applicable to your
       Particular Platform/Compiler.
