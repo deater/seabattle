@@ -2,6 +2,11 @@
  * batt.h     Part of the SEABATTLE game by Vince Weaver                 *
  ************************************************************************/
 
+/* global vars */
+extern int sound_on;
+extern int sound_device;
+extern int first_time;
+
 #define C_BLUE   1      /* Define values for the colors */
 #define C_GREEN  2      /* I co-incidently used the IBM PC values */
 #define C_CYAN   3      /* For the colors, because I know them already */
