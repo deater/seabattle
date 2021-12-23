@@ -5,6 +5,10 @@
  *  Updated for Module 3 --> 13 May 1997                                  *
  *************************************************************************/
 
+#include <ncurses.h>     /* Slang support is good for rxvt in linux */
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>       /* Needed to randomize from time */
 
 #include "batt.h"
 

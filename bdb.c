@@ -3,6 +3,13 @@
  |          13 May 1997  -- by Vince Weaver                         |
  |------------------------------------------------------------------*/
 
+#include <stdio.h>
+#include <ncurses.h>     /* Slang support is good for rxvt in linux */
+
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "batt.h"
 
 void out_of_memory_panic()       /* What to do if malloc() fails */

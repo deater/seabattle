@@ -4,6 +4,13 @@
  * Updated for Module 3 ---> 13 May 1997                                  *
  *************************************************************************/
 
+#include <stdio.h>
+#include <ncurses.h>     /* Slang support is good for rxvt in linux */
+
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
 
 #include "batt.h"
 

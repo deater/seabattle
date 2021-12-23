@@ -2,13 +2,6 @@
  * batt.h     Part of the SEABATTLE game by Vince Weaver                 *
  ************************************************************************/
 
-#include <ncurses.h>     /* Slang support is good for rxvt in linux */
-#include <stdio.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <time.h>       /* Needed to randomize from time */
-#include <string.h>
-
 #define C_BLUE   1      /* Define values for the colors */
 #define C_GREEN  2      /* I co-incidently used the IBM PC values */
 #define C_CYAN   3      /* For the colors, because I know them already */

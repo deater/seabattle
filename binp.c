@@ -3,6 +3,11 @@
  *            For ENEE114.   Finished 15 April 1997                      *
  ************************************************************************/
 
+#include <stdio.h>
+#include <ncurses.h>     /* Slang support is good for rxvt in linux */
+
+#include <ctype.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #include "batt.h"                          /* Include prototypes */
