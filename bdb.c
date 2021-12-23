@@ -170,30 +170,33 @@ void read_data_from_disk(MAIN_THINGY *main_thing)
    fclose(fff);
 }
 
-void write_data_to_disk(MAIN_THINGY *main_thing)
-{                               /* Write linked list to disk */
-   ELEMENT *fifth_elem;
-   DATA *data;
-   int i;
-   FILE *fff;
+/* Write linked list to disk */
+void write_data_to_disk(MAIN_THINGY *main_thing) {
 
+	/* contemporary pop culture reference? */
+	ELEMENT *fifth_elem;
+	DATA *data;
+	int i;
+	FILE *fff;
 
-   if( (fff=fopen("user_dat.sea","w"))==NULL) {printf("error"); return;
-   }
+	fff=fopen("user_dat.sea","w");
+	if (fff==NULL) {
+		printf("error");
+		return;
+	}
 
+	fifth_elem=main_thing->head;
 
-   fifth_elem=main_thing->head;
-   for(i=0;i<main_thing->num_elements;i++)
-     {
-	data=fifth_elem->data;
+	for(i=0;i<main_thing->num_elements;i++) {
+		data=fifth_elem->data;
 
-	fprintf(fff,"%s\n%s\n",data->first_name,data->last_name);
-	fprintf(fff,"%s\n%s\n",data->addy1,data->addy2);
-	fprintf(fff,"%s\n",data->phonenum);
-        fprintf(fff,"%d\n%d ",data->times_played,data->best_score);
-        fifth_elem=fifth_elem->next;
-     }
-   fclose(fff);
+		fprintf(fff,"%s\n%s\n",data->first_name,data->last_name);
+		fprintf(fff,"%s\n%s\n",data->addy1,data->addy2);
+		fprintf(fff,"%s\n",data->phonenum);
+		fprintf(fff,"%d\n%d ",data->times_played,data->best_score);
+		fifth_elem=fifth_elem->next;
+	}
+	fclose(fff);
 }
 
 
@@ -319,8 +322,11 @@ DATA *enter_info(MAIN_THINGY *main_thing)   /* Enter linked list info */
    return datum;
 }
 
+
 /* High Score Routine.  Top 10 Scores */
-void do_high_score(char *name,int turns) {
+void do_high_score(char *name, int turns) {
+
+	/* FIXME: make this more robust */
 
 	FILE *fff;
 	char names[10][100],text[1024];
@@ -329,7 +335,7 @@ void do_high_score(char *name,int turns) {
 	/* If not there, create one */
 	fff=fopen("hiscore.sea","r+");
 	if (fff==NULL) {
-		fff=fopen("hiscore.sea","a+");
+		fff=fopen("hiscore.sea","w+");
 		if (fff!=NULL) {
 			/* These were all friends, guinea pigs, or */
 			/* inside jokes from 1997 */
@@ -343,10 +349,12 @@ void do_high_score(char *name,int turns) {
 		fclose(fff);
 	}
 
+	/* read high score from disk */
 	fff=fopen("hiscore.sea","r");
 	if (fff!=NULL) {
 		for(i=0;i<10;i++) {
-			fscanf(fff,"%s%i",names[i],&scores[i]);
+			fscanf(fff,"%9s",names[i]);
+			fscanf(fff,"%d",&scores[i]);
 		}
 		fclose(fff);
 	}
@@ -357,14 +365,18 @@ void do_high_score(char *name,int turns) {
 	/* If score should be on list, add it */
 	if (turns<scores[9]) {
 		i=8;
-		while( (turns<=scores[i])&&(i>=0) ) {
+
+		while( (i>=0) && (turns<=scores[i])) {
 			scores[i+1]=scores[i];
-			strcpy(names[i+1],names[i]);
+			strncpy(names[i+1],names[i],10);
 			i--;
 		}
+
 		i++;
+
 		scores[i]=turns;
-		strcpy(names[i],name);
+		strncpy(names[i],name,10);
+
 		set_color(C_WHITE,C_BOLD);
 		snprintf(text,100,"%s got a new High Score, #%i",name,i+1);
 		printxy(20,1,text);
@@ -372,7 +384,7 @@ void do_high_score(char *name,int turns) {
 		fff=fopen("hiscore.sea","w+");
 		if (fff!=NULL) {
 			for(i=0;i<10;i++) {
-				fprintf(fff,"%s\n%i",names[i],scores[i]);
+				fprintf(fff,"%s\n%i\n",names[i],scores[i]);
 			}
 			fclose(fff);
 		}
@@ -385,6 +397,7 @@ void do_high_score(char *name,int turns) {
 		snprintf(text,1024,"%2i.  %i  %s",i+1,scores[i],names[i]);
 		printxy(20,i+6,text);
 	}
+
 	set_color(C_WHITE,C_NORMAL);
 	printxy(5,20,"Press any key to Continue");
 	getch();
