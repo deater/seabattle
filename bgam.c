@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include <ncurses.h>     /* Slang support is good for rxvt in linux */
-
+#include <unistd.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
@@ -118,30 +118,27 @@ static void print_message(int color,int person,char *message) {
 	}
 }
 
-static int inboundsx(int x, int y,int users_grid[8][8]) {
-	if ( (x>=0) && (x<=7) &&
-		(users_grid[x][y]!=1) && (users_grid[x][y]!=2) ) {
-		return 1;
-	}
-	return 0;
-}
 
-static int inboundsy(int x, int y,int users_grid[8][8]) {
+#define GRID_EMPTY	0
+#define GRID_HIT	1
+#define GRID_MISS	2
+#define GRID_SUB	3
+#define GRID_BATTLESHIP	4
+#define GRID_CARRIER	5
 
-	if ( (y>=0) && (y<=7) &&
-		(users_grid[x][y]!=1) && (users_grid[x][y]!=2) ) {
-		return 1;
-	}
-	return 0;
-}
+#define DIRECTION_N	0
+#define DIRECTION_S	1
+#define DIRECTION_E	2
+#define DIRECTION_W	3
+
 
 /* The Main Routine */
 static void play_the_game(DATA *person) {
 
 	int users_grid[8][8],computers_grid[8][8];
-	int x=0,y=0,ch2=0,ch3=0,oldcompx=0,oldcompy=0,compx=0;
+	int x=0,y=0,ch2=0,ch3=0,orighitx=0,orighity=0,compx=0;
 	int compy=0,turn=0,prev_hit=0;
-	int direct=0,second_hit=0;
+	int direct=0;
 	char text[100];		/* Used for sprintfs */
 
 	/* A useful structure */
@@ -231,6 +228,7 @@ static void play_the_game(DATA *person) {
      }
 
      place_grid(computers_grid,55,5,0);
+	refresh();
 
      if( (computer_hits_left.sub==0) &&   /* Check to see if you won */
          (computer_hits_left.air==0) &&
@@ -262,108 +260,176 @@ printxy(2,6,"   .||.    ''|...|'    '|..'          |   |     .||. .|.   '|    ")
      }
 
      /* The Computer's Turn */
-                                      /* 0=up 1=down 2=left 3=right */
-     do_arrow(0,turn);
 
-      if ((prev_hit)&&(second_hit)) {    /* Complicated Algorythm */
-	 if (direct==0){                 /* To have computer follow hits */
-	    compy=compy-1; compx=oldcompx; /* And be intelligent.  Works */
-	    if(!inboundsy(compy,compx,users_grid)) direct++;  /* Pretty well */
-	 }
+	/* Indicate computer's turn */
+	do_arrow(0,turn);
 
-	 if (direct==1) {
-	    compy=compy+1; compx=oldcompx;
-	    if(!inboundsy(compy,compx,users_grid)) direct++;
-	 }
+	/* pause for effect to give illusion of thinking? */
+	sleep(1);
 
-	 if (direct==2) {
-	    compx=compx-1; compy=oldcompy;
-	    if(!inboundsx(compx,compy,users_grid)) direct++;
-	 }
+	/* 0=up 1=down 2=left 3=right */
 
-	 if (direct==3) {
-	    compx=compx+1; compy=oldcompy;
-	    if (!inboundsx(compx,compy,users_grid)) direct++;
-	 }
-      }
-      else {
-	 if (direct==0){
-	    compy=oldcompy-1; compx=oldcompx;
-	    if(!inboundsy(compy,compx,users_grid)) direct++;
-	 }
+	/* Complicated Algorithm */
+	/* To have computer follow hits */
+	/* And be intelligent.  Works */
+	/* Pretty well */
 
-	 if (direct==1) {
-	    compy=oldcompy+1; compx=oldcompx;
-	    if(!inboundsy(compy,compx,users_grid)) direct++;
-	 }
+	/* default, just pick random */
+	/* If hit, first try N, S, E, W */
+	/* Once we sink, back to random */
 
-	 if (direct==2) {
-	    compx=oldcompx-1; compy=oldcompy;
-	    if(!inboundsx(compx,compy,users_grid)) direct++;
-	 }
+	/* FIXME */
+	/* If we hit more than expected, go back and look other way */
+	/* this can happen if we have something like */
+	/*          SS    */
+	/*          SS    */
+	/*          SS    */
+	/*    BBBBBBHHBB  */
+	/* note: if we start at HH and sink sub, should notice that */
+	/*       we also were hitting something else */
 
-	 if (direct==3) {
-	    compx=oldcompx+1; compy=oldcompy;
-	    if (!inboundsx(compx,compy,users_grid)) direct++;
-	 }
+	if (prev_hit) {
+		if (direct==DIRECTION_N) {
 
-      }
-      if (direct==4) prev_hit=0;
+			compx=orighitx;
+			do {
+				compy=compy-1;
+			} while((compy>=0)&&(users_grid[compx][compy]==GRID_HIT));
 
-      if (prev_hit==0) {
-         direct=0;
-	 while( (users_grid[compx=rand()%8][compy=rand()%8]==1)
-	   || (users_grid[compx][compy]==2) );
-      }
+			if ((compy<0)||(users_grid[compx][compy]==GRID_MISS)) {
+				compy=orighity;
+				direct++;
+			}
+		}
 
-    switch(users_grid[compx][compy]){       /* Switch to report hits/misses */
-      case 0: users_grid[compx][compy]=2;
-              print_message(C_CYAN,0,"MISS");
-              do_sound(2);
-              second_hit=0;
-              break;
-      case 3: print_message(C_RED,0,"HIT");
-              if(--user_hits_left.sub==0) {
-	        print_message(C_GREEN,0,"I Sank Your Submarine!");
-                do_sound(3);
-		prev_hit=0;
-	      }
-              else if (prev_hit==1) second_hit=1;
-              else { prev_hit=1; second_hit=0;
-	             oldcompx=compx; oldcompy=compy;
-	      }
-              do_sound(1);
-	      users_grid[compx][compy]=1;
-              break;
-      case 4: print_message(C_RED,0,"HIT");
-              if(--user_hits_left.batt==0) {
-		 print_message(C_GREEN,0,"I Sank Your Battleship!");
-		 do_sound(3);
-		 prev_hit=0;
-	      }
-              else if (prev_hit==1) second_hit=1;
-                   else {prev_hit=1; second_hit=0;
-		         oldcompx=compx; oldcompy=compy;
-		   }
-              do_sound(1);
-              users_grid[compx][compy]=1;
-              break;
-      case 5: print_message(C_RED,0,"HIT");
-              if(--user_hits_left.air==0){
-		 print_message(C_GREEN,0,"I Sank Your Aircraft Carrier!");
-		 do_sound(3);
-		 prev_hit=0;
-	      }
-              else if (prev_hit==1) second_hit=1;
-                   else {prev_hit=1; second_hit=0;
-		         oldcompx=compx; oldcompy=compy;
-		   }
-              do_sound(1);
-              users_grid[compx][compy]=1;
-              break;
-   }
+		if (direct==DIRECTION_S) {
+			compx=orighitx;
+			do {
+				compy=compy+1;
+			} while((compy<8)&&(users_grid[compx][compy]==GRID_HIT));
 
-   place_grid(users_grid,5,5,1);
+			if ((compy>7)||(users_grid[compx][compy]==GRID_MISS)) {
+				compy=orighity;
+				direct++;
+			}
+		}
+
+		if (direct==DIRECTION_E) {
+			compy=orighity;
+			do {
+				compx=compx+1;
+			} while((compy<8)&&(users_grid[compx][compy]==GRID_HIT));
+
+			if ((compx>7)||(users_grid[compx][compy]==GRID_MISS)) {
+				compx=orighitx;
+				direct++;
+			}
+		}
+
+		if (direct==DIRECTION_W) {
+			compy=orighity;
+			do {
+				compx=compx-1;
+			} while((compy>=0)&&(users_grid[compx][compy]==GRID_HIT));
+
+			if ((compx<0)||(users_grid[compx][compy]==GRID_MISS)) {
+				prev_hit=0;
+			}
+		}
+
+		/* this shouldn't happen? */
+		if (direct==4) {
+			prev_hit=0;
+		}
+	}
+
+	/* if previous move not a hit, try random until we hit a spot */
+	/* we haven't before */
+	if (prev_hit==0) {
+		direct=DIRECTION_N;
+		while(1) {
+			compx=rand()%8;
+			compy=rand()%8;
+			if ((users_grid[compx][compy]!=GRID_HIT) &&
+				(users_grid[compx][compy]!=GRID_MISS)) break;
+		}
+	}
+
+
+
+	/* Switch to report hits/misses */
+	switch(users_grid[compx][compy]){
+		case GRID_EMPTY: /* was empty, so a miss */
+			users_grid[compx][compy]=GRID_MISS;
+			print_message(C_CYAN,0,"MISS");
+			do_sound(SOUND_MISS);
+			/* change direction if chasing a hit */
+			if (prev_hit) {
+				direct++;
+				compx=orighitx;
+				compy=orighity;
+			}
+
+			break;
+		case GRID_SUB:
+			users_grid[compx][compy]=GRID_HIT;
+			print_message(C_RED,0,"HIT");
+			user_hits_left.sub--;
+			if (user_hits_left.sub==0) {
+				print_message(C_GREEN,0,"I Sank Your Submarine!");
+				do_sound(SOUND_SUNKIT);
+				prev_hit=0;
+			}
+			else {
+				if (prev_hit==0) {
+					prev_hit=1;
+					orighitx=compx;
+					orighity=compy;
+				}
+			}
+			do_sound(SOUND_HIT);
+			break;
+		case GRID_BATTLESHIP:
+			print_message(C_RED,0,"HIT");
+			users_grid[compx][compy]=GRID_HIT;
+			user_hits_left.batt--;
+			if (user_hits_left.batt==0) {
+				print_message(C_GREEN,0,"I Sank Your Battleship!");
+				do_sound(SOUND_SUNKIT);
+				prev_hit=0;
+			}
+			else {
+				if (prev_hit==0) {
+					prev_hit=1;
+					orighitx=compx;
+					orighity=compy;
+				}
+			}
+			do_sound(SOUND_HIT);
+			break;
+		case GRID_CARRIER:
+			users_grid[compx][compy]=GRID_HIT;
+			print_message(C_RED,0,"HIT");
+			user_hits_left.air--;
+			if (user_hits_left.air==0){
+				print_message(C_GREEN,0,"I Sank Your Aircraft Carrier!");
+				do_sound(SOUND_SUNKIT);
+				prev_hit=0;
+			}
+			else {
+				if (prev_hit==0) {
+					prev_hit=1;
+					orighitx=compx;
+					orighity=compy;
+				}
+			}
+			do_sound(SOUND_HIT);
+			break;
+		}
+
+	place_grid(users_grid,5,5,1);
+
+	refresh();
 
    if( (user_hits_left.sub==0) &&      /* Detect if the computer wins */
        (user_hits_left.air==0) &&
