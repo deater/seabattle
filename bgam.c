@@ -164,102 +164,148 @@ static void play_the_game(DATA *person) {
 	place_grid(users_grid,5,5,1);
 	place_grid(computers_grid,55,5,0);
 
-   while (ch3!='Q') {                      /* Main Loop */
-      turn++;                              /* Count how many turns */
-      do_arrow(1,turn);
-      do {                        /* Stuck 30 mins looking to find bug */
-	 ch2=mvgetch(6+y,56+x);   /* only to find 6,56 switched here   */
+	/* Main Loop */
+	while (ch3!='Q') {
 
-	 if((ch2==KEY_UP)&&(y>0)) y--;      /* Checks arrow keys */
-	 if((ch2==KEY_DOWN)&&(y<7)) y++;
-	 if((ch2==KEY_RIGHT)&&(x<14)) x+=2;
-	 if((ch2==KEY_LEFT)&&(x>0)) x-=2;
+		/***********************/
+		/***********************/
+		/*     Your Turn       */
+		/***********************/
+		/***********************/
 
-	 ch3=toupper(ch2);                   /* Checks for co-ordinates */
-	 if((ch3>='A')&&(ch3<'I')) y=ch3-'A';
-	 if((ch3>='1')&&(ch3<'9')) x=2*(ch3-'1');
+		/* Count how many turns */
 
-	 place_grid(computers_grid,55,5,0);  /* Puts red && cursor */
-	 set_color(C_RED,C_BOLD);
-	 move(6+y,56+x);
-	 printw("&&");
-	 refresh();
+		do_arrow(1,turn);
+		turn++;
 
-	 if (ch3=='R') draw_the_screen(person,turn);  /* Menu Items */
-	 if (ch3=='S') print_sound_status();
-	 if (ch3=='X') quit();
-	                              /* Checks to see if repeat shot */
-	 if ((ch2==' ') && ((computers_grid[x/2][y]==1)
-		        || (computers_grid[x/2][y]==2))) {
-	    print_message(C_GREEN,1,"YOU ALREADY WENT THERE");
-	    ch2='O';
-	 }
-     } while ((ch2!=' ')&&(ch3!='Q'));
+		do {
+			/* Stuck 30 mins looking to find bug */
+			/* only to find 6,56 switched here   */
+			ch2=mvgetch(6+y,56+x);
 
-     switch (computers_grid[x/2][y]){       /* See where you hit */
-            case 0: computers_grid[x/2][y]=2;
-                    print_message(C_CYAN,1,"MISS");
-                    do_sound(2);
-                    break;
-            case 3: print_message(C_RED,1,"HIT");
-                    if (--computer_hits_left.sub==0) {
-	               print_message(C_GREEN,1,"You Sank My Submarine!");
-                       do_sound(3);
-	            }
-                    do_sound(1);
-	            computers_grid[x/2][y]=1;
-                    break;
-            case 4: print_message(C_RED,1,"HIT");
-                    if (--computer_hits_left.batt==0) {
-		       print_message(C_GREEN,1,"You Sank My Battleship!");
-		       do_sound(3);
-	            }
-                    do_sound(1);
-                    computers_grid[x/2][y]=1;
-                    break;
-            case 5: print_message(C_RED,1,"HIT");
-                    if (--computer_hits_left.air==0){
-		       print_message(C_GREEN,1,"You Sank My Aircraft Carrier!");
-		       do_sound(3);
-	            }
-                    do_sound(1);
-                    computers_grid[x/2][y]=1;
-                    break;
-     }
+			/* Checks arrow keys */
+			if ((ch2==KEY_UP)&&(y>0)) y--;
+			if ((ch2==KEY_DOWN)&&(y<7)) y++;
+			if ((ch2==KEY_RIGHT)&&(x<14)) x+=2;
+			if ((ch2==KEY_LEFT)&&(x>0)) x-=2;
 
-     place_grid(computers_grid,55,5,0);
-	refresh();
+			/* Checks for co-ordinates */
+		 	ch3=toupper(ch2);
+			if ((ch3>='A')&&(ch3<'I')) y=ch3-'A';
+			if ((ch3>='1')&&(ch3<'9')) x=2*(ch3-'1');
 
-     if( (computer_hits_left.sub==0) &&   /* Check to see if you won */
-         (computer_hits_left.air==0) &&
-         (computer_hits_left.batt==0) ) {
-            print_message(C_RED,1,"YOU WON! PRESS A KEY TO CONTINUE");
-	    getch();
-            clear(); refresh();
-     set_color(C_BLUE,C_BOLD);
+			/* Puts red && cursor */
+			place_grid(computers_grid,55,5,0);
+
+			set_color(C_RED,C_BOLD);
+			move(6+y,56+x);
+			printw("&&");
+			refresh();
+
+			/* Menu Items */
+			if (ch3=='R') draw_the_screen(person,turn);
+			if (ch3=='S') print_sound_status();
+			if (ch3=='X') quit();
+
+			/* Checks to see if repeat shot */
+			if ((ch2==' ') && ((computers_grid[x/2][y]==1)
+				|| (computers_grid[x/2][y]==2))) {
+				print_message(C_GREEN,1,
+					"YOU ALREADY WENT THERE");
+				ch2='O';
+			}
+		} while ((ch2!=' ')&&(ch3!='Q'));
+
+		/* See where you hit */
+		switch (computers_grid[x/2][y]){
+			case GRID_EMPTY:
+				computers_grid[x/2][y]=2;
+				print_message(C_CYAN,1,"MISS");
+				do_sound(SOUND_MISS);
+				break;
+			case GRID_SUB:
+				print_message(C_RED,1,"HIT");
+				computer_hits_left.sub--;
+				if (computer_hits_left.sub==0) {
+					print_message(C_GREEN,1,
+						"You Sank My Submarine!");
+					do_sound(SOUND_SUNKIT);
+				}
+				else {
+					do_sound(SOUND_HIT);
+				}
+				computers_grid[x/2][y]=1;
+				break;
+			case GRID_BATTLESHIP:
+				print_message(C_RED,1,"HIT");
+				computer_hits_left.batt--;
+				if (computer_hits_left.batt==0) {
+					print_message(C_GREEN,1,
+						"You Sank My Battleship!");
+					do_sound(SOUND_SUNKIT);
+				}
+				else {
+					do_sound(SOUND_HIT);
+				}
+				computers_grid[x/2][y]=1;
+				break;
+			case GRID_CARRIER:
+				print_message(C_RED,1,"HIT");
+				computer_hits_left.air--;
+				if (computer_hits_left.air==0) {
+					print_message(C_GREEN,1,
+						"You Sank My Aircraft Carrier!");
+					do_sound(SOUND_SUNKIT);
+				}
+				else {
+					do_sound(SOUND_HIT);
+				}
+				computers_grid[x/2][y]=1;
+				break;
+		}
+
+		place_grid(computers_grid,55,5,0);
+		refresh();
+
+		/* Check to see if you won */
+		if ( (computer_hits_left.sub==0) &&
+			(computer_hits_left.air==0) &&
+			(computer_hits_left.batt==0) ) {
+			print_message(C_RED,1,
+				"YOU WON! PRESS A KEY TO CONTINUE");
+			getch();
+			clear(); refresh();
+			set_color(C_BLUE,C_BOLD);
 printxy(2,2," '||' '|'  ..|''||   '||'  '|'    '|| '||'  '|' '||' '|.   '|'   ");
 printxy(2,3,"   || |   .|'    ||   ||    |      '|. '|.  .'   ||   |'|   |    ");
 printxy(2,4,"    ||    ||      ||  ||    |       ||  ||  |    ||   | '|. |    ");
 printxy(2,5,"    ||    '|.     ||  ||    |        ||| |||     ||   |   |||    ");
 printxy(2,6,"   .||.    ''|...|'    '|..'          |   |     .||. .|.   '|    ");
-     set_color(C_WHITE,C_BOLD);
-        if(turn<person->best_score) {
+			set_color(C_WHITE,C_BOLD);
+			if(turn<person->best_score) {
+				sprintf(text,"NEW BEST SCORE: %i turns.  "
+					"Your previous best was %i",
+					turn,person->best_score);
+				person->best_score=turn;
+			}
+			else {
+				sprintf(text,"You won in %i turns.  "
+					"Your previous best is %i.",
+		           		turn,person->best_score);
+			}
+			printxy(5,8,text);
+			printxy(27,20,"Press any key to continue");
+			getch();
+			do_high_score(person->first_name,turn);
+			person->times_played++;
+			return;
+		}
 
-	   sprintf(text,"NEW BEST SCORE: %i turns.  Your previous best was %i",
-		   turn,person->best_score);
-	   person->best_score=turn;
-	}
-	else sprintf(text,"You won in %i turns.  Your previous best is %i.",
-		           turn,person->best_score);
-           printxy(5,8,text);
-	   printxy(27,20,"Press any key to continue");
-           getch();
-	   do_high_score(person->first_name,turn);
-	   person->times_played++;
-           return;
-     }
-
-     /* The Computer's Turn */
+	/***********************/
+	/***********************/
+	/* The Computer's Turn */
+	/***********************/
+	/***********************/
 
 	/* Indicate computer's turn */
 	do_arrow(0,turn);
