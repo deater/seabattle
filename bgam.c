@@ -364,8 +364,8 @@ int main_menu(DATA *person, MAIN_THINGY *main_thing) {
    char text[100];
 
    while(1){
-                               /* Play sound if first time through */
-	if ((sound_device==1) && (first_time==0)) {
+	/* Play seabattle sound if first time through */
+	if ((sound_device!=SOUND_DEVICE_SPEAKER) && (first_time==0)) {
 		play_sound("opening.au");
 	}
 

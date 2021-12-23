@@ -3,6 +3,8 @@
  *            For ENEE114.   Finished 15 April 1997                      *
  ************************************************************************/
 
+#include <unistd.h>
+
 #include "batt.h"                          /* Include prototypes */
 
 extern int sound_on;                       /* It was simplest to define */
@@ -86,18 +88,31 @@ void draw_opening(void)                    /* Draw opening screen */
    refresh();
    set_color(C_WHITE,C_NORMAL);
    move(19,0);
-                                           /* Sees if /dev/audio is available */
-   if ((ftemp=fopen("/dev/audio","w"))==NULL) {
-      printw("No digital sound available.  Press any key to continue.");
-      ch=mvgetch(19,55);
-   }
-   else {
-      fclose(ftemp);                       /* Sets up sound values */
-      printw("Do you want nifty digital sound effects (y/n) ?");
-      ch=mvgetch(19,49);
-      if ( (ch=='y') || (ch=='Y') ) sound_device=1;
-      else sound_device=0;
-   }
+
+	/* first see if /usr/bin/aplay exists */
+	if (!access("/usr/bin/aplay",X_OK)) {
+		sound_device=SOUND_DEVICE_APLAY;
+	}
+	/* Sees if /dev/audio is available */
+	else if (!access("/dev/audio",W_OK)) {
+		sound_device=SOUND_DEVICE_DEV_AUDIO;
+	}
+	else {
+		sound_device=SOUND_DEVICE_SPEAKER;
+	}
+
+	if (sound_device==SOUND_DEVICE_SPEAKER) {
+		printw("No digital sound available.  "
+			"Press any key to continue.");
+		ch=mvgetch(19,55);
+	}
+	else {
+		printw("Do you want nifty digital sound effects (y/n) ?");
+		ch=mvgetch(19,49);
+		if ( (ch!='y') && (ch!='Y') ) {
+			sound_device=SOUND_DEVICE_SPEAKER;
+		}
+	}
 }
 
 
@@ -127,21 +142,18 @@ void clear_grid(int grid[8][8])            /* Clears an 8x8 grid */
 /* 0=error 1=hit 2=miss 3=sunkit */
 /* Incomplete as of yet */
 
-#define SOUND_ERROR	0
-#define SOUND_HIT	1
-#define SOUND_MISS	2
-#define	SOUND_SUNKIT	3
-
-#define SOUND_DEVICE_BEEP	0
-#define SOUND_DEVICE_DIGITAL	1
-
 void play_sound(char *soundfile) {
 
-	char command[100];
+	char command[256];
 
-	snprintf(command,100,"cat %s > /dev/audio",soundfile);
-
-	if (sound_device==SOUND_DEVICE_DIGITAL) {
+	if (sound_device==SOUND_DEVICE_APLAY) {
+		snprintf(command,256,"/usr/bin/aplay -q %s/%s",
+			DATADIR,soundfile);
+		system(command);
+	}
+	else  if (sound_device==SOUND_DEVICE_DEV_AUDIO) {
+		snprintf(command,256,"cat %s/%s > /dev/audio",
+			DATADIR,soundfile);
 		system(command);
 	}
 	else {

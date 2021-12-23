@@ -8,7 +8,7 @@
 ##############################################################
 
 #Your compiler.  If gcc doesn't work, try CC
-CC = gcc
+#CC = gcc
 #CC = cc
 
 #On Suns, SGIs, and other Unix systems uncomment the following
@@ -17,12 +17,16 @@ CC = gcc
 #C_OPTS = 
 #L_OPTS = -lcurses
 
-#On Linux, uncomment the following
+#On FreeBSD/Linux, uncomment the following
 #
-PLATFORM = Linux
-C_OPTS = -O2 -Wall
-L_OPTS = -lncurses
+ifndef PREFIX
+PREFIX = .
+endif
 
+PLATFORM = FreeBSD/Linux
+DATADIR = ${PREFIX}/share/seabattle
+C_OPTS = ${CFLAGS} -DDATADIR=\"${DATADIR}\"
+L_OPTS = $(LDFLAGS) -lncurses
 
 #For Dos/Windows DJGPP (you need the curses lib)
 #PLATFORM = DOS_DJGPP
@@ -45,12 +49,12 @@ seabattle:	batt.o binp.o bgam.o bdb.o
 batt.o:	batt.c batt.h
 	@echo
 	@echo "Compiling for platform: $(PLATFORM)"
-	@echo "Be sure to edit the Makefile if the above is not correct" 
+	@echo "Be sure to edit the Makefile if the above is not correct"
 	@echo
 	$(CC) $(C_OPTS) -c batt.c
 
 bgam.o:	bgam.c batt.h
-	$(CC) $(C_OPTS) -c bgam.c  
+	$(CC) $(C_OPTS) -c bgam.c
 
 binp.o:	binp.c batt.h
 	$(CC) $(C_OPTS) -c binp.c

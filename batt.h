@@ -2,7 +2,7 @@
  * batt.h     Part of the SEABATTLE game by Vince Weaver                 *
  ************************************************************************/
 
-#include <curses.h>     /* Slang support is good for rxvt in linux */
+#include <ncurses.h>     /* Slang support is good for rxvt in linux */
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -21,8 +21,18 @@
 
 #define SOUND_ON 1
 #define SOUND_OFF 0
-#define SOUND_SPEAKER 0
-#define SOUND_8BIT 1
+
+//#define SOUND_SPEAKER 0
+//#define SOUND_8BIT 1
+
+#define SOUND_ERROR	0
+#define SOUND_HIT	1
+#define SOUND_MISS	2
+#define SOUND_SUNKIT	3
+
+#define SOUND_DEVICE_SPEAKER	0
+#define SOUND_DEVICE_DEV_AUDIO	1
+#define SOUND_DEVICE_APLAY	2
 
 #define INBOUNDSX(x,y) ( (x>=0) && (x<=7) && (users_grid[x][y]!=1) && (users_grid[x][y]!=2) )
 #define INBOUNDSY(y,x) ( (y>=0) && (y<=7) && (users_grid[x][y]!=1) && (users_grid[x][y]!=2) )

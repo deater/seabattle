@@ -117,7 +117,7 @@ void read_data_from_disk(MAIN_THINGY *main_thing)
 
    FILE *fff;
 
-   if( (fff=fopen("user_dat.sea","r+"))==NULL) return;
+   if( (fff=fopen(DATADIR"/user_dat.sea","r+"))==NULL) return;
 
    while(!feof(fff)){
       if(read_string_from_disk(fff,(char*)&temp)==NULL) return;
@@ -179,7 +179,7 @@ void write_data_to_disk(MAIN_THINGY *main_thing) {
 	int i;
 	FILE *fff;
 
-	fff=fopen("user_dat.sea","w");
+	fff=fopen(DATADIR"/user_dat.sea","w");
 	if (fff==NULL) {
 		printf("error");
 		return;
@@ -333,9 +333,9 @@ void do_high_score(char *name, int turns) {
 	int scores[10],i;
 
 	/* If not there, create one */
-	fff=fopen("hiscore.sea","r+");
+	fff=fopen(DATADIR"/hiscore.sea","r+");
 	if (fff==NULL) {
-		fff=fopen("hiscore.sea","w+");
+		fff=fopen(DATADIR"/hiscore.sea","w+");
 		if (fff!=NULL) {
 			/* These were all friends, guinea pigs, or */
 			/* inside jokes from 1997 */
@@ -350,7 +350,7 @@ void do_high_score(char *name, int turns) {
 	}
 
 	/* read high score from disk */
-	fff=fopen("hiscore.sea","r");
+	fff=fopen(DATADIR"/hiscore.sea","r");
 	if (fff!=NULL) {
 		for(i=0;i<10;i++) {
 			fscanf(fff,"%9s",names[i]);
@@ -381,7 +381,7 @@ void do_high_score(char *name, int turns) {
 		snprintf(text,100,"%s got a new High Score, #%i",name,i+1);
 		printxy(20,1,text);
 
-		fff=fopen("hiscore.sea","w+");
+		fff=fopen(DATADIR"/hiscore.sea","w+");
 		if (fff!=NULL) {
 			for(i=0;i<10;i++) {
 				fprintf(fff,"%s\n%i\n",names[i],scores[i]);

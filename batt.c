@@ -9,7 +9,7 @@
 #include "batt.h"
 
 int sound_on=SOUND_ON;				/*  These are exported */
-int sound_device=SOUND_SPEAKER;			/* Awkward, but keeps */
+int sound_device=SOUND_DEVICE_SPEAKER;		/* Awkward, but keeps */
 int salvo_play=0;				/* paramaters uncluttered*/
 int first_time=0;
 DATA *current_player;
