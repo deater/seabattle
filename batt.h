@@ -16,6 +16,11 @@ extern int sound_device;
 #define C_BOLD   1
 #define C_NORMAL 0
 
+#define C_BGBLUE 9
+#define C_BGCYAN 11
+#define C_BGWHITE 15
+#define C_WHITECYAN 16
+
 #define SOUND_ON 1
 #define SOUND_OFF 0
 

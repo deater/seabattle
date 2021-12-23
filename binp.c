@@ -21,12 +21,17 @@ void seabattle_init_curses(void) {
 	start_color();
 
 	/* Allocate the colors we'll use */
-	init_pair(7,COLOR_WHITE,COLOR_BLACK);
 	init_pair(1,COLOR_BLUE,COLOR_BLACK);
 	init_pair(2,COLOR_GREEN,COLOR_BLACK);
 	init_pair(3,COLOR_CYAN,COLOR_BLACK);
 	init_pair(4,COLOR_RED,COLOR_BLACK);
 	init_pair(6,COLOR_YELLOW,COLOR_BLACK);
+	init_pair(7,COLOR_WHITE,COLOR_BLACK);
+
+	init_pair(9,COLOR_BLACK,COLOR_BLUE);
+	init_pair(11,COLOR_BLACK,COLOR_CYAN);
+	init_pair(15,COLOR_BLACK,COLOR_WHITE);
+	init_pair(16,COLOR_WHITE,COLOR_CYAN);
 
 	/* Start key by key mode */
 	cbreak();
@@ -73,22 +78,18 @@ void seabattle_exit_curses(void) {
 void draw_title(void) {
 
 	set_color(C_BLUE,C_BOLD);
-	printxy(0,0,".|'''|                    '||'''|,            ||      ||    '||`");
-	printxy(0,1,"||                         ||   ||            ||      ||     ||");
-	printxy(0,2,"`|'''|, .|''|,  '''|.      ||;;;;    '''|.  ''||''  ''||''   ||  .|''|,");
-	printxy(0,3," .   || ||..|| .|''||      ||   ||  .|''||    ||      ||     ||  ||..||");
-	printxy(0,4," |...|' `|...  `|..||.    .||...|'  `|..||.   `|..'   `|..' .||. `|...");
+	printxy(4,0,".|'''|                    '||'''|,            ||      ||    '||`");
+	printxy(4,1,"||                         ||   ||            ||      ||     ||");
+	printxy(4,2,"`|'''|, .|''|,  '''|.      ||;;;;    '''|.  ''||''  ''||''   ||  .|''|,");
+	printxy(4,3," .   || ||..|| .|''||      ||   ||  .|''||    ||      ||     ||  ||..||");
+	printxy(4,4," |...|' `|...  `|..||.    .||...|'  `|..||.   `|..'   `|..' .||. `|...");
 	set_color(C_WHITE,C_NORMAL);
 
 }
 
-/* Draw opening screen */
-void draw_opening(void) {
-
+#if 0
+static void draw_oldship(void) {
 	int i;
-	char ch;
-
-	draw_title();
 
 	printxy(0,6,"                                )_");
 	printxy(0,7,"                           _____|_|_____+__");
@@ -98,19 +99,82 @@ void draw_opening(void) {
 	move(11,0);
 	set_color(C_CYAN,C_NORMAL);
 	for(i=0;i<39;i++) printw("/\\");
+}
+#endif
+
+static void draw_newship(void) {
+	int i,j;
+
+	set_color(C_BGCYAN,C_NORMAL);
+
+	/* draw sky */
+	for(i=0;i<7;i++) {
+		move(6+i,0);
+		for(j=0;j<79;j++) {
+			printw(" ");
+		}
+	}
+
+	set_color(C_BGBLUE,C_NORMAL);
+
+	/* draw water */
+	for(i=0;i<5;i++) {
+		move(13+i,0);
+		for(j=0;j<79;j++) {
+			printw(" ");
+		}
+	}
+
+	set_color(C_BGWHITE,C_NORMAL);
+	/* draw ship */
+	move(7,37); printw("  ");
+	move(8,37); printw("  "); move(8,43); printw("  ");
+	move(9,32); printw("         "); move(9,43); printw("  ");
+	move(10,32); printw("                ");
+	move(11,13); for(j=0;j<53;j++) { printw(" "); }
+	move(12,14); for(j=0;j<51;j++) { printw(" "); }
+
+	move(10,22); printw("  ");
+	move(10,28); printw("  ");
+	move(10,50); printw("  ");
+
+	set_color(C_WHITECYAN,C_NORMAL);
+	move(9,20); printw("__");
+	move(9,26); printw("__");
+	move(9,52); printw("__");
+	move(7,44); printw("|");
+	move(7,40); printw("+");
+	move(8,40); printw("|");
+
+
+}
+
+
+
+
+/* Draw opening screen */
+void draw_opening(void) {
+
+	char ch;
+
+	draw_title();
+
+	//draw_oldship();
+	draw_newship();
+
 	set_color(C_RED,C_BOLD);
-	printxy(10,13,"A Game By Vince Weaver - Who cannot draw ASCII ships");
+	printxy(13,18,"A Game By Vince Weaver - Who cannot draw ASCII ships");
 	set_color(C_YELLOW,C_BOLD);
-	printxy(11,14,"vince@deater.net   http://www.deater.net/weave");
+	printxy(16,19,"vince@deater.net   http://www.deater.net/weave");
 	set_color(C_GREEN,C_BOLD);
-	printxy(18,15,"Another Amazing Project for ENEE114");
+	printxy(21,20,"Another Amazing Project for ENEE114");
 	set_color(C_WHITE,C_BOLD);
 	if (!has_colors()) {
-		printxy(0,17,"COLOR NOT AVAILABLE ON THIS TERMINAL. Using Black and White.");
+		printxy(0,22,"COLOR NOT AVAILABLE ON THIS TERMINAL. Using Black and White.");
 	}
 	refresh();
 	set_color(C_WHITE,C_NORMAL);
-	move(19,0);
+	move(22,0);
 
 	/***********************/
 	/* detect sound setup */
@@ -131,11 +195,11 @@ void draw_opening(void) {
 	if (sound_device==SOUND_DEVICE_SPEAKER) {
 		printw("No digital sound available.  "
 			"Press any key to continue.");
-		ch=mvgetch(19,55);
+		ch=mvgetch(22,55);
 	}
 	else {
 		printw("Do you want nifty digital sound effects (y/n) ?");
-		ch=mvgetch(19,49);
+		ch=mvgetch(22,49);
 		if ( (ch!='y') && (ch!='Y') ) {
 			sound_device=SOUND_DEVICE_SPEAKER;
 		}
