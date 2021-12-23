@@ -16,7 +16,7 @@
 /* Draws the arrow pointing to */
 /* Whoever's turn it is */
 /* 0=Computer, 1=Player */
-void do_arrow(int whos_turn, int turn_num) {
+static void do_arrow(int whos_turn, int turn_num) {
 
 	char text[20];
 
@@ -41,7 +41,7 @@ void do_arrow(int whos_turn, int turn_num) {
 
 /* Toggles Sound on and Off */
 /* And Displays the Change  */
-void print_sound_status(void) {
+static void print_sound_status(void) {
 
 	set_color(C_BLUE,C_NORMAL);
 	sound_on=!sound_on;
@@ -67,7 +67,7 @@ void print_sound_status(void) {
 
 /* Draw the main screen    */
 /* Also called on a redraw */
-void draw_the_screen(DATA *person, int turn_num) {
+static void draw_the_screen(DATA *person, int turn_num) {
 
 	set_color(C_BLUE,C_BOLD);
 	printxy(31,2,"S E A B A T T L E");
@@ -99,7 +99,7 @@ void draw_the_screen(DATA *person, int turn_num) {
 }
 
 /* A generic Message Handler */
-void print_message(int color,int person,char *message) {
+static void print_message(int color,int person,char *message) {
 
 	set_color(color,C_BOLD);
 	if(!person) {
@@ -120,7 +120,7 @@ void print_message(int color,int person,char *message) {
 
 
 /* The Main Routine */
-void play_the_game(DATA *person) {
+static void play_the_game(DATA *person) {
 
 	int users_grid[8][8],computers_grid[8][8];
 	int x=0,y=0,ch2=0,ch3=0,oldcompx=0,oldcompy=0,compx=0;
@@ -378,11 +378,11 @@ printxy(2,6,"  .||.    ''|...|'    '|..'      .||.....|  ''|...|'  |'....|'  .||
 
 
 /* Not utilized yet */
-void  do_options(void) {
+static void do_options(void) {
 }
 
 /* Not implemented yet */
-void do_help(void) {
+static void do_help(void) {
 }
 
 /* The Main Menu */
@@ -390,6 +390,7 @@ int main_menu(DATA *person, MAIN_THINGY *main_thing) {
 
 	int ch=0;
 	char text[100];
+	static int first_time=0;
 
 	while(1){
 		/* Play seabattle sound if first time through */

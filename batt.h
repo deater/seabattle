@@ -5,7 +5,6 @@
 /* global vars */
 extern int sound_on;
 extern int sound_device;
-extern int first_time;
 
 #define C_BLUE   1      /* Define values for the colors */
 #define C_GREEN  2      /* I co-incidently used the IBM PC values */
@@ -79,13 +78,6 @@ void clear_status_lines(void);
 
 /* bgam.c */
 DATA *enter_info(MAIN_THINGY *main_thing);
-void do_arrow(int whos_turn,int num_turns);
-void print_sound_status(void);
-void draw_the_screen(DATA *person,int num_turns);
-void print_message(int color,int person,char *message);
-void play_the_game(DATA *person);
-void do_options(void);
-void do_help(void);
 int main_menu(DATA *person,MAIN_THINGY *main_thing);
 
 /* bdb.c */
