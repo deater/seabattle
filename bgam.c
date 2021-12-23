@@ -266,7 +266,10 @@ printxy(2,6,"   .||.    ''|...|'    '|..'          |   |     .||. .|.   '|    ")
 	refresh();
 
 	/* pause for effect to give illusion of thinking? */
-	sleep(1);
+	/* only if sounds not playing */
+	if ((sound_on) || (sound_device)) {
+		usleep(500000);
+	}
 
 	/* 0=up 1=down 2=left 3=right */
 
@@ -387,8 +390,8 @@ printxy(2,6,"   .||.    ''|...|'    '|..'          |   |     .||. .|.   '|    ")
 					orighitx=compx;
 					orighity=compy;
 				}
-			}
 			do_sound(SOUND_HIT);
+			}
 			break;
 		case GRID_BATTLESHIP:
 			print_message(C_RED,0,"HIT");
@@ -405,8 +408,8 @@ printxy(2,6,"   .||.    ''|...|'    '|..'          |   |     .||. .|.   '|    ")
 					orighitx=compx;
 					orighity=compy;
 				}
+				do_sound(SOUND_HIT);
 			}
-			do_sound(SOUND_HIT);
 			break;
 		case GRID_CARRIER:
 			users_grid[compx][compy]=GRID_HIT;
@@ -423,8 +426,8 @@ printxy(2,6,"   .||.    ''|...|'    '|..'          |   |     .||. .|.   '|    ")
 					orighitx=compx;
 					orighity=compy;
 				}
+				do_sound(SOUND_HIT);
 			}
-			do_sound(SOUND_HIT);
 			break;
 		}
 
@@ -478,7 +481,15 @@ int main_menu(DATA *person, MAIN_THINGY *main_thing) {
 	while(1){
 		/* Play seabattle sound if first time through */
 		if ((sound_device!=SOUND_DEVICE_SPEAKER) && (first_time==0)) {
-			play_sound("opening.au");
+			clear();
+			draw_title();
+			refresh();
+			if (sound_device) {
+				play_sound("opening.au");
+			}
+			else {
+				sleep(1);
+			}
 		}
 
 		if (!first_time) first_time=5;

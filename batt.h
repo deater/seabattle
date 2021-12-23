@@ -60,6 +60,7 @@ void seabattle_init_curses(void);
 void seabattle_exit_curses(void);
 void set_color(int color,int bold);
 void printxy(int x,int y,char *tempst);
+void draw_title(void);
 void draw_opening(void);
 int get_users_grid(int grid[8][8]);
 void get_computers_grid(int grid[8][8]);

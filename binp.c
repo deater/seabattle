@@ -70,12 +70,7 @@ void seabattle_exit_curses(void) {
 	endwin();
 }
 
-
-/* Draw opening screen */
-void draw_opening(void) {
-
-	int i;
-	char ch;
+void draw_title(void) {
 
 	set_color(C_BLUE,C_BOLD);
 	printxy(0,0,".|'''|                    '||'''|,            ||      ||    '||`");
@@ -84,6 +79,17 @@ void draw_opening(void) {
 	printxy(0,3," .   || ||..|| .|''||      ||   ||  .|''||    ||      ||     ||  ||..||");
 	printxy(0,4," |...|' `|...  `|..||.    .||...|'  `|..||.   `|..'   `|..' .||. `|...");
 	set_color(C_WHITE,C_NORMAL);
+
+}
+
+/* Draw opening screen */
+void draw_opening(void) {
+
+	int i;
+	char ch;
+
+	draw_title();
+
 	printxy(0,6,"                                )_");
 	printxy(0,7,"                           _____|_|_____+__");
 	printxy(0,8,"                           |   x    x  x   |");
