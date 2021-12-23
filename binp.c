@@ -140,7 +140,7 @@ void draw_opening(void) {
 
 /* This made code slightly less */
 /* Cluttered */
-void put_dumb_instructions(void) {
+static void put_dumb_instructions(void) {
 	set_color(C_GREEN,C_BOLD);
 	printxy(5,7,"Choose a ship:");
 	printxy(5,8,"1. Submarine");
@@ -153,7 +153,7 @@ void put_dumb_instructions(void) {
 
 
 /* Clears an 8x8 grid */
-void clear_grid(int grid[8][8]) {
+static void clear_grid(int grid[8][8]) {
 
 	int i,j;
 
@@ -224,6 +224,18 @@ static void invalid_message(int message) {
 	}
 	if (message==1) {
 		printxy(10,20,"Invalid! Overlaps another ship! Try Again.");
+	}
+}
+
+/* Remove all of a value from */
+/* a grid */
+static void purge_grid(int grid[8][8], int type) {
+
+	int i,j;
+	for(i=0;i<8;i++) {
+		for(j=0;j<8;j++) {
+			if (grid[i][j]==(type+3)) grid[i][j]=0;
+		}
 	}
 }
 
@@ -516,23 +528,13 @@ int place_ship(int grid[8][8],int size) {
 
 /* Draw very simple screen */
 /* will be fancier with actual game */
-void display_screen(int users_grid[8][8], int computers_grid[8][8]) {
+static void display_screen(int users_grid[8][8], int computers_grid[8][8]) {
 	place_grid(users_grid,10,5,1);
 	place_grid(computers_grid,50,5,1);
 	refresh();
 }
 
-/* Remove all of a value from */
-/* a grid */
-void purge_grid(int grid[8][8], int type) {
 
-	int i,j;
-	for(i=0;i<8;i++) {
-		for(j=0;j<8;j++) {
-			if (grid[i][j]==(type+3)) grid[i][j]=0;
-		}
-	}
-}
 
 
 /* Display a grid on the screen */

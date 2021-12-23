@@ -66,21 +66,17 @@ void seabattle_exit_curses(void);
 void set_color(int color,int bold);
 void printxy(int x,int y,char *tempst);
 void draw_opening(void);
-void clear_grid(int grid[8][8]);
 int get_users_grid(int grid[8][8]);
 void get_computers_grid(int grid[8][8]);
-void display_screen(int users_grid[8][8],int computers_grid[8][8]);
 void place_grid(int grid[8][8],int x,int y,int show_ships);
 int test_overlap(int grid[8][8],int x,int y,int xdir,int ydir,int size);
 void put_ship(int grid[8][8],int x,int y,int xdir,int ydir,int size);
 int place_ship(int grid[8][8],int size);
 void quit(void);
 void clear_side(void);
-void put_dumb_instructions(void);
 void do_sound(int which_one);
 void clear_status_lines(void);
-void purge_grid(int grid[8][8],int type);
-//void simple_message(int message);
+
 /* bgam.c */
 DATA *enter_info(MAIN_THINGY *main_thing);
 void do_arrow(int whos_turn,int num_turns);
