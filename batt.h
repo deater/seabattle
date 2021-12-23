@@ -15,9 +15,6 @@
 #define SOUND_ON 1
 #define SOUND_OFF 0
 
-//#define SOUND_SPEAKER 0
-//#define SOUND_8BIT 1
-
 #define SOUND_ERROR	0
 #define SOUND_HIT	1
 #define SOUND_MISS	2
@@ -32,25 +29,25 @@
 
 
 typedef struct  {
-  char *first_name;
-  char *last_name;
-  char *addy1;
-  char *addy2;
-  char *phonenum;
-  int times_played;
-  int best_score;
+	char *first_name;
+	char *last_name;
+	char *addy1;
+	char *addy2;
+	char *phonenum;
+	int times_played;
+	int best_score;
 } DATA;
 
 typedef struct element{
-  struct element *prev;
-  struct element *next;
-  DATA *data;
+	struct element *prev;
+	struct element *next;
+	DATA *data;
 } ELEMENT;
 
 typedef struct {
-  ELEMENT *head;
-  ELEMENT *tail;
-  int num_elements;
+	ELEMENT *head;
+	ELEMENT *tail;
+	int num_elements;
 } MAIN_THINGY;
 
 extern DATA *current_player;
