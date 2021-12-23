@@ -243,7 +243,7 @@ void play_sound(char *soundfile) {
 	char command[256];
 
 	if (sound_device==SOUND_DEVICE_APLAY) {
-		snprintf(command,256,"/usr/bin/aplay -q %s/%s",
+		snprintf(command,256,"/usr/bin/aplay -q %s/%s 2> /dev/null",
 			DATADIR,soundfile);
 		system(command);
 	}
